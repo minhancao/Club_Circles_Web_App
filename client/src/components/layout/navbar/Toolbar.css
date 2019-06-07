@@ -1,0 +1,128 @@
+.toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  height: 56px;
+  z-index: 99;
+  box-shadow: 0 8px 6px -11px #999;
+}
+
+.toolbar__navigation {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+.toolbar__logo {
+  color: black;
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-family: "Avenir Next";
+  color: #707070;
+}
+
+.toolbar__logo:hover {
+  color: #40e0d0;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.navbar-items {
+  display: inline-block;
+  font-family: "Avenir Next";
+  color: #707070;
+  text-decoration-color: "none";
+  padding: 0 1.2rem;
+}
+
+.navbar-items:hover {
+  color: #40e0d0;
+}
+
+.navbar-items2 {
+  display: inline-block;
+  font-family: "Avenir Next";
+  color: #707070;
+  text-decoration-color: "none";
+  padding: 0 1.2rem;
+}
+
+.navbar-items2:hover {
+  color: #40e0d0;
+}
+
+.toolbar_navigation-items2 {
+  width: 100%;
+  display: block;
+  padding: 8px 16px;
+  text-align: left;
+  border: none;
+  white-space: normal;
+  float: none;
+  outline: 0;
+  color: #707070;
+}
+
+.toolbar_navigation-items2:hover {
+  color: #40e0d0;
+}
+
+.menu_icon {
+  font-family: "Avenir Next";
+  color: #707070;
+  text-decoration-color: "none";
+  padding: 0 1.2rem;
+  margin-top: 2px;
+  display: none;
+}
+
+.menu_icon:hover {
+  color: #40e0d0;
+}
+
+@media (max-width: 800px) {
+  .toolbar_navigation-items,
+  .navbar-items,
+  .navbar-items2 {
+    display: none;
+  }
+
+  .toolbar_navigation-items2 {
+    display: inline;
+  }
+
+  .menu_icon {
+    display: inline-block;
+  }
+}
+
+@media (min-width: 801px) {
+  .toolbar_navigation-items2 {
+    display: none;
+  }
+  .toolbar_navigation-items {
+    display: inline;
+  }
+}
+
+.side-drawer {
+  color: #707070;
+}
+
+.side-drawer a {
+  display: block;
+  text-align: center;
+  font-size: 20px;
+  color: #707070;
+  padding: 1.5rem 0;
+}
+
+.side-drawer a:hover {
+  display: block;
+  color: #40e0d0;
+}

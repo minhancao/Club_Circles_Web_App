@@ -1,0 +1,173 @@
+@import "~antd/dist/antd.css";
+
+.remove-btn {
+  margin-right: 0.5rem;
+}
+
+.fade-enter {
+  opacity: 0.01;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 1000ms ease-in;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0.01;
+  transition: opacity 1000ms ease-in;
+}
+
+.topmiddle1 {
+  position: absolute;
+  left: 50%;
+  top: 21%;
+  transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+}
+.bottommiddle1 {
+  position: absolute;
+  left: 50%;
+  bottom: 26%;
+  transform: translate(-50%, 0%);
+  -ms-transform: translate(-50%, 0%);
+}
+
+.w3-bar-item2 {
+  padding: 8px 16px;
+  float: left;
+  width: auto;
+  border: none;
+  outline: 0;
+}
+.w3-bar-item2 {
+  font-size: 26px;
+  font-weight: 550;
+  width: 100%;
+  padding: 20px 14px;
+  text-align: left;
+  border: none;
+  white-space: normal;
+  float: none;
+  outline: 0;
+}
+
+.valign-wrapper2 {
+  position: absolute;
+  display: flex;
+  -webkit-box-align: left;
+  -webkit-align-items: left;
+  -ms-flex-align: left;
+  align-items: center;
+}
+
+.inline {
+  display: block;
+  margin: 10px;
+}
+
+.div1 {
+  width: 300px;
+  height: 300px;
+  display: inline-block;
+  align-items: center;
+}
+
+.div2 {
+  display: inline-block;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 20%;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Create two equal columns that floats next to each other */
+.leftCol {
+  float: left;
+  width: 25%;
+}
+
+/* Create two equal columns that floats next to each other */
+.rightCol {
+  float: left;
+  width: 75%;
+}
+
+/* Create two equal columns that floats next to each other */
+.halfCol {
+  float: left;
+  width: 50%;
+}
+
+.quarterCol {
+  float: left;
+  width: 30%;
+}
+.useFont {
+  font-family: "Avenir Next";
+}
+
+.sideMenuBtns {
+  font-size: 17px;
+  background-color: white;
+  width: 175px;
+  height: 30px;
+  border-radius: 10px;
+  padding-left: 6px;
+  text-transform: none;
+  box-shadow: none;
+  text-align: left;
+  color: black;
+}
+
+.modal-container {
+  position: relative;
+}
+.modal-container .modal,
+.modal-container .modal-backdrop {
+  position: absolute;
+}
+
+.circle {
+  font-size: 2.5em;
+  font-weight: 300;
+  width: 60px;
+  border-radius: 50%;
+  color: black;
+  line-height: 62px;
+  vertical-align: middle;
+  height: 60px;
+  margin: 0 auto;
+  box-shadow: 0px 0px 8.73px 0.27px rgba(0, 0, 0, 0.39);
+  cursor: pointer;
+  transition: all 0.4s ease-in-out;
+  text-align: center;
+  background-color: white;
+}
+.clubsPageButton {
+  color: #ff5a60;
+}
+.clubsPageButton:hover {
+  opacity: 0.6;
+}
