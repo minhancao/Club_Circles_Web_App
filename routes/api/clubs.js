@@ -43,4 +43,18 @@ router.delete("/:id", (req, res) => {
     .catch(err => res.status(404).json({ success: false }));
 });
 
+// update club
+// announcement
+router.put("/:id", (req, res) => {
+  Club.findOneAndUpdate(
+    { _id: req.params.id },
+    { $set: req.body },
+    { sort: { _id: -1 }, upsert: true },
+    (err, result) => {
+      if (err) return res.json(err);
+      res.json({ success: true });
+    }
+  );
+});
+
 module.exports = router;
