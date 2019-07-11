@@ -1,26 +1,81 @@
 import React, { Component } from "react";
-import { Button, Modal, Form, Input } from "antd";
+import { Button, Modal, Form, Input, Icon, Checkbox, Radio } from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { addClub } from "../../actions/clubActions";
 
+const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
+  // eslint-disable-next-line
+  class extends React.Component {
+    render() {
+      const { visible, onCancel, onCreate, form } = this.props;
+      const { getFieldDecorator } = form;
+      return (
+        <Modal
+          visible={visible}
+          title="Create a new collection"
+          okText="Create"
+          onCancel={onCancel}
+          onOk={onCreate}
+        >
+          <Form layout="vertical">
+            <Form.Item label="Title">
+              {getFieldDecorator('title', {
+                rules: [{ required: true, message: 'Please input the title of collection!' }],
+              })(<Input />)}
+            </Form.Item>
+            <Form.Item label="Description">
+              {getFieldDecorator('description')(<Input type="textarea" />)}
+            </Form.Item>
+            <Form.Item className="collection-create-form_last-form-item">
+              {getFieldDecorator('modifier', {
+                initialValue: 'public',
+              })(
+                <Radio.Group>
+                  <Radio value="public">Public</Radio>
+                  <Radio value="private">Private</Radio>
+                </Radio.Group>,
+              )}
+            </Form.Item>
+          </Form>
+        </Modal>
+      );
+    }
+  },
+);
+
 class ClubModal extends Component {
   state = {
-    modal: false,
+    visible: false,
     name: "",
     description: "",
     category: "",
     location: ""
   };
 
-  toggle = () => {
-    this.setState({
-      modal: !this.state.modal
+  showModal = () => {
+    this.setState({ visible: true });
+  };
+
+  handleCancel = () => {
+    this.setState({ visible: false });
+  };
+
+  handleCreate = () => {
+    const { form } = this.formRef.props;
+    form.validateFields((err, values) => {
+      if (err) {
+        return;
+      }
+
+      console.log('Received values of form: ', values);
+      form.resetFields();
+      this.setState({ visible: false });
     });
   };
 
-  onChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
+  saveFormRef = formRef => {
+    this.formRef = formRef;
   };
 
   onSubmit = e => {
@@ -41,75 +96,21 @@ class ClubModal extends Component {
     this.props.addClub(newItem);
 
     // Close modal
-    this.toggle();
+    this.handleCancel();
   };
 
   render() {
     return (
-      <div style={{ paddingTop: "100px", paddingLeft: "30px" }}>
-        <button
-          className="btn"
-          href="#"
-          style={{
-            boxShadow: "none",
-            borderRadius: "10px",
-            backgroundColor: "#FF5A60"
-          }}
-          onClick={this.toggle}
-        >
-          Add a Club
-        </button>
-
-        <Modal isOpen={this.state.modal} toggle={this.toggle} style={{}}>
-          <ModalHeader toggle={this.toggle}>Add To Clubs List</ModalHeader>
-          <ModalBody>
-            <Form onSubmit={this.onSubmit}>
-              <FormGroup>
-                <Label for="item">Club</Label>
-                <Input
-                  type="text"
-                  name="name"
-                  id="item"
-                  placeholder="Add a club name"
-                  onChange={this.onChange}
-                />
-                <Input
-                  type="text"
-                  name="description"
-                  id="item2"
-                  placeholder="Add a description"
-                  onChange={this.onChange}
-                />
-                <Input
-                  type="text"
-                  name="category"
-                  id="item3"
-                  placeholder="Add a category"
-                  onChange={this.onChange}
-                />
-                <Input
-                  type="text"
-                  name="location"
-                  id="item4"
-                  placeholder="Add a club location"
-                  onChange={this.onChange}
-                />
-                <Button
-                  className="flow-text grey-text text-darken-1"
-                  color="dark"
-                  style={{
-                    marginTop: "2rem",
-                    backgroundColor: "red",
-                    color: "white",
-                    textTransform: "none"
-                  }}
-                >
-                  Add Club
-                </Button>
-              </FormGroup>
-            </Form>
-          </ModalBody>
-        </Modal>
+      <div>
+        <Button type="primary" onClick={this.showModal}>
+          New Collection
+        </Button>
+        <CollectionCreateForm
+          wrappedComponentRef={this.saveFormRef}
+          visible={this.state.visible}
+          onCancel={this.handleCancel}
+          onCreate={this.handleCreate}
+        />
       </div>
     );
   }

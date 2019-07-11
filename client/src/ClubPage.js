@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import "./App.css";
 import axios from "axios";
 import { connect } from "react-redux";
-import { getClub } from "./actions/clubActions";
+import { getClub, putClub } from "./actions/clubActions";
 import PropTypes from "prop-types";
+import {Button} from "antd";
 
 const onMouseOver = event => {
   const el = event.target;
@@ -56,16 +57,27 @@ componentDidUpdate() {
       button4: "white",
       button5: "white",
       button6: "white",
-      club: [],
+      club: {},
       membersArray: []
     }; //this is how you set up state
   }
 
+  componentDidMount() {
+    
+  }
+
+  onNewEvent = () => {
+    console.log("this ran");
+    const clubTemp = this.props.clubs.clubs.find(item => item._id === this.props.location.clubId);
+    clubTemp.events.push({"name": "event3", "dateOfEvent": "2019-06-29", "description": "third event"});
+    this.props.putClub(this.props.location.clubId, clubTemp);
+  }
   
 
   // Render the content
   renderForm = () => {
     // What page should show?
+    const club1 = this.props.clubs.clubs.find(item => item._id === this.props.location.clubId);
     switch (this.state.display) {
       case "home":
         return (
@@ -73,16 +85,16 @@ componentDidUpdate() {
             className="halfCol useFont"
             style={{ paddingTop: "33px", color: "grey", fontSize: "18px" }}
           >
-            {this.props.clubs.club.category} <br />
+            {club1.category} <br />
             <b style={{ fontWeight: "600", fontSize: "48px", color: "black" }}>
-              {this.props.clubs.club.name}
+              {club1.name}
             </b>
             <br />
-            Location: {this.props.clubs.club.location} <br />
+            Location: {club1.location} <br />
             <br />
             About: <br />
             <br />
-            {this.props.clubs.club.description}
+            {club1.description}
           </div>
         );
 
@@ -96,10 +108,10 @@ componentDidUpdate() {
               About
             </b>
             <br />
-            Club President: {this.props.clubs.club.president}
+            Club President: {club1.president}
             <br />
             <br />
-            {this.props.clubs.club.about}
+            {club1.about}
           </div>
         ); //pass method to child
 
@@ -143,8 +155,9 @@ componentDidUpdate() {
               Events
             </b>
             <br />
-            doiasjfioajfiaojfioajfioa sjfioasj fioaehgiu aehgu iah iuah uiahgau
-            ighaiu hga iugha iu aiuhkdlfjakdjfad fadhuig hu
+            <Button onClick={this.onNewEvent}>New Event</Button>
+            {club1.events.map(
+            ({ name, description, dateOfEvent }) => (<div><div>{name} {description} {dateOfEvent}</div><br></br></div>))}
           </div>
         ); //pass method to child
 
@@ -171,14 +184,14 @@ componentDidUpdate() {
           >
             Student Organization <br />
             <b style={{ fontWeight: "600", fontSize: "48px", color: "black" }}>
-              {this.props.clubs.club.name}
+              {club1.name}
             </b>
             <br />
             Location: San Jose State University <br />
             <br />
             About: <br />
             <br />
-            {this.props.clubs.club.description}
+            {club1.description}
           </div>
         );
     }
@@ -220,6 +233,7 @@ componentDidUpdate() {
     this.setState({ display: "members", button6: "#C0C0C0" });
   };
   render() {
+    const club1 = this.props.clubs.clubs.find(item => item._id === this.props.location.clubId);
     return (
       <div className="App">
       {this.props.clubs && 
@@ -233,7 +247,7 @@ componentDidUpdate() {
                 zoom: 0.8
               }}
             >
-              {this.props.clubs.club.name}
+              {club1.name}
             </h1>
             <img
               alt="some alt"
@@ -403,7 +417,8 @@ componentDidUpdate() {
 }
 
 ClubPage.propTypes = {
-  getClub: PropTypes.func.isRequired
+  getClub: PropTypes.func.isRequired,
+  putClub: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -413,5 +428,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getClub }
+  { getClub, putClub }
 )(ClubPage);

@@ -52,7 +52,10 @@ router.put("/:id", (req, res) => {
     { sort: { _id: -1 }, upsert: true },
     (err, result) => {
       if (err) return res.json(err);
-      res.json({ success: true });
+      // return all clubs...
+      Club.find()
+    .sort({ name: -1 })
+    .then(items => res.json(items));
     }
   );
 });

@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import "../../App.css";
 import { Card, Icon, Avatar, Row, Col } from "antd";
+import ClubModal from "./ClubModal";
 
 const { Meta } = Card;
 
@@ -69,6 +70,8 @@ class ClubsList extends Component {
           </p>
         </div>
 
+        <ClubModal></ClubModal>
+
         <Row>
           {clubs.map(
             ({ _id, name, description, category, location, members }) => (
@@ -87,7 +90,7 @@ class ClubsList extends Component {
                       onClick={this.onGoClick.bind(this, _id)}
                       to={{
                         pathname: "/ClubPage",
-                        data: _id
+                        clubId: _id
                       }}
                       style={{
                         fontFamily: "Avenir Next",

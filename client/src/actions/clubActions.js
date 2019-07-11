@@ -21,6 +21,18 @@ export const getClub = id => dispatch => {
   );
 };
 
+export const putClub = (id, item) => dispatch => {
+  dispatch(setClubsLoading());
+  console.log(item);
+  axios.put(`/api/clubs/${id}`, item).then(res =>
+    // update clubs to redux state
+    dispatch({
+      type: GET_CLUBS,
+      payload: res.data
+    })
+  );
+};
+
 export const deleteClub = id => dispatch => {
   axios.delete(`/api/clubs/${id}`).then(res =>
     dispatch({
