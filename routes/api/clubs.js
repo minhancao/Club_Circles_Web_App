@@ -48,16 +48,14 @@ router.delete("/:id", (req, res) => {
 router.put("/:id", (req, res) => {
   Club.findOneAndUpdate(
     { _id: req.params.id },
-    { $set: req.body },
+    { $push: req.body },
     { sort: { _id: -1 }, upsert: true },
     (err, result) => {
       if (err) return res.json(err);
-      // return all clubs...
-      Club.find()
-    .sort({ name: -1 })
-    .then(items => res.json(items));
     }
-  );
+  )
+    .then(item => res.json(item))
+    .catch(err => res.status(404).json({ success: false }));
 });
 
 module.exports = router;
