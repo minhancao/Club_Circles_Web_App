@@ -53,9 +53,7 @@ router.put("/add/:id", (req, res) => {
     (err, result) => {
       if (err) return res.json(err);
     }
-  )
-    .then(item => res.json(item))
-    .catch(err => res.status(404).json({ success: false }));
+  );
 });
 
 // update club

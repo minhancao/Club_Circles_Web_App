@@ -1,5 +1,11 @@
 import axios from "axios";
-import { GET_CLUBS, GET_CLUB, ADD_CLUB, DELETE_CLUB, CLUBS_LOADING } from "./types";
+import {
+  GET_CLUBS,
+  GET_CLUB,
+  ADD_CLUB,
+  DELETE_CLUB,
+  CLUBS_LOADING
+} from "./types";
 
 export const getClubs = () => dispatch => {
   dispatch(setClubsLoading());
@@ -23,13 +29,13 @@ export const getClub = id => dispatch => {
 
 export const putClub = (id, item) => dispatch => {
   dispatch(setClubsLoading());
-  console.log(item);
-  axios.put(`/api/clubs/${id}`, item).then(res =>
-    // update clubs to redux state
-    dispatch({
-      type: GET_CLUBS,
-      payload: res.data
-    })
+  axios.put(`/api/clubs/add/${id}`, item).then(
+    axios.get("/api/clubs").then(res =>
+      dispatch({
+        type: GET_CLUBS,
+        payload: res.data
+      })
+    )
   );
 };
 

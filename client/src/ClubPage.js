@@ -4,7 +4,7 @@ import axios from "axios";
 import { connect } from "react-redux";
 import { getClub, putClub } from "./actions/clubActions";
 import PropTypes from "prop-types";
-import {Button} from "antd";
+import { Button } from "antd";
 
 const onMouseOver = event => {
   const el = event.target;
@@ -33,8 +33,7 @@ const imagesUsers = importAll(
 );
 
 class ClubPage extends Component {
-
-componentDidUpdate() {
+  componentDidUpdate() {
     /* const { data } = this.props.location;
     var mongoose = require("mongoose");
     var id = mongoose.Types.ObjectId(data);
@@ -62,22 +61,29 @@ componentDidUpdate() {
     }; //this is how you set up state
   }
 
-  componentDidMount() {
-    
-  }
+  componentDidMount() {}
 
   onNewEvent = () => {
-    console.log("this ran");
-    const clubTemp = this.props.clubs.clubs.find(item => item._id === this.props.location.clubId);
-    clubTemp.events.push({"name": "event3", "dateOfEvent": "2019-06-29", "description": "third event"});
-    this.props.putClub(this.props.location.clubId, clubTemp);
-  }
-  
+    const clubTemp = this.props.clubs.clubs.find(
+      item => item._id === this.props.location.clubId
+    );
+    const tempPush = {
+      events: {
+        name: "event3",
+        dateOfEvent: "2019-06-29",
+        description: "third event"
+      }
+    };
+    clubTemp.events.push(tempPush);
+    this.props.putClub(this.props.location.clubId, tempPush);
+  };
 
   // Render the content
   renderForm = () => {
     // What page should show?
-    const club1 = this.props.clubs.clubs.find(item => item._id === this.props.location.clubId);
+    const club1 = this.props.clubs.clubs.find(
+      item => item._id === this.props.location.clubId
+    );
     switch (this.state.display) {
       case "home":
         return (
@@ -156,8 +162,14 @@ componentDidUpdate() {
             </b>
             <br />
             <Button onClick={this.onNewEvent}>New Event</Button>
-            {club1.events.map(
-            ({ name, description, dateOfEvent }) => (<div><div>{name} {description} {dateOfEvent}</div><br></br></div>))}
+            {club1.events.map(({ name, description, dateOfEvent }) => (
+              <div>
+                <div>
+                  {name} {description} {dateOfEvent}
+                </div>
+                <br />
+              </div>
+            ))}
           </div>
         ); //pass method to child
 
@@ -233,184 +245,192 @@ componentDidUpdate() {
     this.setState({ display: "members", button6: "#C0C0C0" });
   };
   render() {
-    const club1 = this.props.clubs.clubs.find(item => item._id === this.props.location.clubId);
+    const club1 = this.props.clubs.clubs.find(
+      item => item._id === this.props.location.clubId
+    );
     return (
       <div className="App">
-      {this.props.clubs && 
-        <div className="center-align" style={{ paddingTop: "80px" }}>
-          <div className="leftCol left-align" style={{ paddingLeft: "120px" }}>
-            <h1
-              style={{
-                paddingTop: "50px",
-                fontFamily: "Avenir Next",
-                color: "grey",
-                zoom: 0.8
-              }}
-            >
-              {club1.name}
-            </h1>
-            <img
-              alt="some alt"
-              style={{
-                marginTop: "20px",
-                width: "150px",
-                height: "160px"
-              }}
-              src={images["clublogo.png"]}
-            />
-            <div className="useFont " style={{ paddingTop: "160px" }}>
-              <ul>
-                <li>
-                  <div
-                    className="btn "
-                    style={{
-                      fontSize: "17px",
-                      backgroundColor: this.state.button1,
-                      width: "175px",
-                      height: "30px",
-                      borderRadius: "10px",
-                      paddingTop: "0px",
-                      paddingLeft: "6px",
-                      textTransform: "none",
-                      boxShadow: "none",
-                      textAlign: "left",
-                      color: "black"
-                    }}
-                    onMouseEnter={event => onMouseOver(event)}
-                    onMouseOut={event => onMouseOut(event)}
-                    onClick={this.home}
-                  >
-                    {" "}
-                    Home
-                  </div>
-                </li>
-                <li style={{ paddingTop: "10px" }}>
-                  <div
-                    className="btn sideMenuBtns"
-                    href="#"
-                    style={{
-                      backgroundColor: this.state.button2,
-                      boxShadow: "none"
-                    }}
-                    onMouseEnter={event => onMouseOver(event)}
-                    onMouseOut={event => onMouseOut(event)}
-                    onClick={this.about}
-                  >
-                    About
-                  </div>
-                </li>
-                <li style={{ paddingTop: "10px" }}>
-                  <div
-                    className="btn sideMenuBtns"
-                    href="#"
-                    style={{
-                      backgroundColor: this.state.button3,
-                      boxShadow: "none"
-                    }}
-                    onMouseEnter={event => onMouseOver(event)}
-                    onMouseOut={event => onMouseOut(event)}
-                    onClick={this.announcements}
-                  >
-                    Announcements
-                  </div>
-                </li>
-                <li style={{ paddingTop: "10px" }}>
-                  <div
-                    className="btn sideMenuBtns"
-                    href="#"
-                    style={{
-                      backgroundColor: this.state.button4,
-                      boxShadow: "none"
-                    }}
-                    onMouseEnter={event => onMouseOver(event)}
-                    onMouseOut={event => onMouseOut(event)}
-                    onClick={this.discussions}
-                  >
-                    Discussions
-                  </div>
-                </li>
-                <li style={{ paddingTop: "10px" }}>
-                  <div
-                    className="btn sideMenuBtns"
-                    href="#"
-                    style={{
-                      backgroundColor: this.state.button5,
-                      boxShadow: "none"
-                    }}
-                    onMouseEnter={event => onMouseOver(event)}
-                    onMouseOut={event => onMouseOut(event)}
-                    onClick={this.events}
-                  >
-                    Events
-                  </div>
-                </li>
-                <li style={{ paddingTop: "10px" }}>
-                  <div
-                    className="btn sideMenuBtns"
-                    href="#"
-                    style={{
-                      backgroundColor: this.state.button6,
-                      boxShadow: "none"
-                    }}
-                    onMouseEnter={event => onMouseOver(event)}
-                    onMouseOut={event => onMouseOut(event)}
-                    onClick={this.members}
-                  >
-                    Members
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="rightCol left-align useFont">
-            <img
-              alt="some alt"
-              style={{
-                marginTop: "45px",
-
-                width: "1100px",
-                height: "390px"
-              }}
-              src={images["citynight.jpg"]}
-            />
-            <div>{this.renderForm()}</div>
-
+        {this.props.clubs && (
+          <div className="center-align" style={{ paddingTop: "80px" }}>
             <div
-              className="quarterCol left-align useFont"
-              style={{
-                fontSize: "24px",
-                fontWeight: "500",
-                color: "grey",
-                paddingLeft: "70px",
-                paddingTop: "50px"
-              }}
+              className="leftCol left-align"
+              style={{ paddingLeft: "120px" }}
             >
-              Members
-              <br />
-              <div style={{ display: "inline-block" }}>
-                {this.props.membersArray && this.props.membersArray.map(member => (
-                  <img
-                    alt="some alt"
-                    style={{
-                      display: "inline-block",
-                      width: "60px",
-                      height: "60px",
-                      borderRadius: "100%",
-                      paddingRight: "5px"
-                    }}
-                    src={
-                      imagesUsers[(member + ".png").toString().toLowerCase()]
-                    }
-                  />
-                ))}
+              <h1
+                style={{
+                  paddingTop: "50px",
+                  fontFamily: "Avenir Next",
+                  color: "grey",
+                  zoom: 0.8
+                }}
+              >
+                {club1.name}
+              </h1>
+              <img
+                alt="some alt"
+                style={{
+                  marginTop: "20px",
+                  width: "150px",
+                  height: "160px"
+                }}
+                src={images["clublogo.png"]}
+              />
+              <div className="useFont " style={{ paddingTop: "160px" }}>
+                <ul>
+                  <li>
+                    <div
+                      className="btn "
+                      style={{
+                        fontSize: "17px",
+                        backgroundColor: this.state.button1,
+                        width: "175px",
+                        height: "30px",
+                        borderRadius: "10px",
+                        paddingTop: "0px",
+                        paddingLeft: "6px",
+                        textTransform: "none",
+                        boxShadow: "none",
+                        textAlign: "left",
+                        color: "black"
+                      }}
+                      onMouseEnter={event => onMouseOver(event)}
+                      onMouseOut={event => onMouseOut(event)}
+                      onClick={this.home}
+                    >
+                      {" "}
+                      Home
+                    </div>
+                  </li>
+                  <li style={{ paddingTop: "10px" }}>
+                    <div
+                      className="btn sideMenuBtns"
+                      href="#"
+                      style={{
+                        backgroundColor: this.state.button2,
+                        boxShadow: "none"
+                      }}
+                      onMouseEnter={event => onMouseOver(event)}
+                      onMouseOut={event => onMouseOut(event)}
+                      onClick={this.about}
+                    >
+                      About
+                    </div>
+                  </li>
+                  <li style={{ paddingTop: "10px" }}>
+                    <div
+                      className="btn sideMenuBtns"
+                      href="#"
+                      style={{
+                        backgroundColor: this.state.button3,
+                        boxShadow: "none"
+                      }}
+                      onMouseEnter={event => onMouseOver(event)}
+                      onMouseOut={event => onMouseOut(event)}
+                      onClick={this.announcements}
+                    >
+                      Announcements
+                    </div>
+                  </li>
+                  <li style={{ paddingTop: "10px" }}>
+                    <div
+                      className="btn sideMenuBtns"
+                      href="#"
+                      style={{
+                        backgroundColor: this.state.button4,
+                        boxShadow: "none"
+                      }}
+                      onMouseEnter={event => onMouseOver(event)}
+                      onMouseOut={event => onMouseOut(event)}
+                      onClick={this.discussions}
+                    >
+                      Discussions
+                    </div>
+                  </li>
+                  <li style={{ paddingTop: "10px" }}>
+                    <div
+                      className="btn sideMenuBtns"
+                      href="#"
+                      style={{
+                        backgroundColor: this.state.button5,
+                        boxShadow: "none"
+                      }}
+                      onMouseEnter={event => onMouseOver(event)}
+                      onMouseOut={event => onMouseOut(event)}
+                      onClick={this.events}
+                    >
+                      Events
+                    </div>
+                  </li>
+                  <li style={{ paddingTop: "10px" }}>
+                    <div
+                      className="btn sideMenuBtns"
+                      href="#"
+                      style={{
+                        backgroundColor: this.state.button6,
+                        boxShadow: "none"
+                      }}
+                      onMouseEnter={event => onMouseOver(event)}
+                      onMouseOut={event => onMouseOut(event)}
+                      onClick={this.members}
+                    >
+                      Members
+                    </div>
+                  </li>
+                </ul>
               </div>
-              <div className="circle" style={{ display: "inline-block" }}>
-                +
+            </div>
+            <div className="rightCol left-align useFont">
+              <img
+                alt="some alt"
+                style={{
+                  marginTop: "45px",
+
+                  width: "1100px",
+                  height: "390px"
+                }}
+                src={images["citynight.jpg"]}
+              />
+              <div>{this.renderForm()}</div>
+
+              <div
+                className="quarterCol left-align useFont"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "500",
+                  color: "grey",
+                  paddingLeft: "70px",
+                  paddingTop: "50px"
+                }}
+              >
+                Members
+                <br />
+                <div style={{ display: "inline-block" }}>
+                  {this.props.membersArray &&
+                    this.props.membersArray.map(member => (
+                      <img
+                        alt="some alt"
+                        style={{
+                          display: "inline-block",
+                          width: "60px",
+                          height: "60px",
+                          borderRadius: "100%",
+                          paddingRight: "5px"
+                        }}
+                        src={
+                          imagesUsers[
+                            (member + ".png").toString().toLowerCase()
+                          ]
+                        }
+                      />
+                    ))}
+                </div>
+                <div className="circle" style={{ display: "inline-block" }}>
+                  +
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      }
+        )}
       </div>
     );
   }
@@ -418,7 +438,7 @@ componentDidUpdate() {
 
 ClubPage.propTypes = {
   getClub: PropTypes.func.isRequired,
-  putClub: PropTypes.func.isRequired,
+  putClub: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
