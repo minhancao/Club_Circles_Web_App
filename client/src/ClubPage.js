@@ -64,17 +64,23 @@ class ClubPage extends Component {
   componentDidMount() {}
 
   onNewEvent = () => {
-    const clubTemp = this.props.clubs.clubs.find(
-      item => item._id === this.props.location.clubId
-    );
     const tempPush = {
       events: {
-        name: "event3",
+        name: "TestEvent123",
         dateOfEvent: "2019-06-29",
-        description: "third event"
+        description: "Test Event Description"
       }
     };
-    clubTemp.events.push(tempPush);
+    this.props.putClub(this.props.location.clubId, tempPush);
+  };
+
+  onNewAnnouncement = () => {
+    const tempPush = {
+      announcements: {
+        name: "Announcement Test",
+        announcement: "Announcement description..."
+      }
+    };
     this.props.putClub(this.props.location.clubId, tempPush);
   };
 
@@ -131,8 +137,14 @@ class ClubPage extends Component {
               Announcements
             </b>
             <br />
-            doiasjfioajfiaojfioajfioa sjfioasj fioaehgiu aehgu iah iuah uiahgau
-            ighaiu hga iugha iu aiuhkdlfjakdjfad fadhuig hu
+            <Button onClick={this.onNewAnnouncement}>New Announcement</Button>
+            {club1.announcements.map(({ name, announcement }) => (
+              <div>
+                <div>Name: {name}</div>
+                <div>Announcement: {announcement}</div>
+                <br />
+              </div>
+            ))}
           </div>
         ); //pass method to child
 
@@ -164,9 +176,9 @@ class ClubPage extends Component {
             <Button onClick={this.onNewEvent}>New Event</Button>
             {club1.events.map(({ name, description, dateOfEvent }) => (
               <div>
-                <div>
-                  {name} {description} {dateOfEvent}
-                </div>
+                <div>Event: {name}</div>
+                <div>Description: {description}</div>
+                <div>Date of Event: {dateOfEvent}</div>
                 <br />
               </div>
             ))}
