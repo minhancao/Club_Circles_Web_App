@@ -90,6 +90,8 @@ class ClubPage extends Component {
     const club1 = this.props.clubs.clubs.find(
       item => item._id === this.props.location.clubId
     );
+    console.log(club1);
+    console.log(this.props.auth);
     switch (this.state.display) {
       case "home":
         return (
@@ -97,6 +99,10 @@ class ClubPage extends Component {
             className="halfCol useFont"
             style={{ paddingTop: "33px", color: "grey", fontSize: "18px" }}
           >
+            {this.props.auth.isAuthenticated &&
+            this.props.auth.user.name == club1.president ? (
+              <button>Edit Club</button>
+            ) : null}
             {club1.category} <br />
             <b style={{ fontWeight: "600", fontSize: "48px", color: "black" }}>
               {club1.name}
@@ -450,15 +456,14 @@ class ClubPage extends Component {
 
 ClubPage.propTypes = {
   getClub: PropTypes.func.isRequired,
-  putClub: PropTypes.func.isRequired
+  putClub: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
   clubs: state.clubs,
-  membersArray: state.clubs.club.members
+  membersArray: state.clubs.club.members,
+  auth: state.auth
 });
 
-export default connect(
-  mapStateToProps,
-  { getClub, putClub }
-)(ClubPage);
+export default connect(mapStateToProps, { getClub, putClub })(ClubPage);
