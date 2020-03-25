@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
+import "./ClubPage.css";
 import axios from "axios";
 import { connect } from "react-redux";
 import { getClub, putClub } from "./actions/clubActions";
@@ -267,13 +268,10 @@ class ClubPage extends Component {
       item => item._id === this.props.location.clubId
     );
     return (
-      <div className="App">
+      <div>
         {this.props.clubs && (
-          <div className="center-align" style={{ paddingTop: "80px" }}>
-            <div
-              className="leftCol left-align"
-              style={{ paddingLeft: "120px" }}
-            >
+          <div className="clubPageContainer" style={{ paddingTop: "80px" }}>
+            <div className="header">
               <h1
                 style={{
                   paddingTop: "50px",
@@ -293,111 +291,6 @@ class ClubPage extends Component {
                 }}
                 src={images["clublogo.png"]}
               />
-              <div className="useFont " style={{ paddingTop: "160px" }}>
-                <ul>
-                  <li>
-                    <div
-                      className="btn "
-                      style={{
-                        fontSize: "17px",
-                        backgroundColor: this.state.button1,
-                        width: "175px",
-                        height: "30px",
-                        borderRadius: "10px",
-                        paddingTop: "0px",
-                        paddingLeft: "6px",
-                        textTransform: "none",
-                        boxShadow: "none",
-                        textAlign: "left",
-                        color: "black"
-                      }}
-                      onMouseEnter={event => onMouseOver(event)}
-                      onMouseOut={event => onMouseOut(event)}
-                      onClick={this.home}
-                    >
-                      {" "}
-                      Home
-                    </div>
-                  </li>
-                  <li style={{ paddingTop: "10px" }}>
-                    <div
-                      className="btn sideMenuBtns"
-                      href="#"
-                      style={{
-                        backgroundColor: this.state.button2,
-                        boxShadow: "none"
-                      }}
-                      onMouseEnter={event => onMouseOver(event)}
-                      onMouseOut={event => onMouseOut(event)}
-                      onClick={this.about}
-                    >
-                      About
-                    </div>
-                  </li>
-                  <li style={{ paddingTop: "10px" }}>
-                    <div
-                      className="btn sideMenuBtns"
-                      href="#"
-                      style={{
-                        backgroundColor: this.state.button3,
-                        boxShadow: "none"
-                      }}
-                      onMouseEnter={event => onMouseOver(event)}
-                      onMouseOut={event => onMouseOut(event)}
-                      onClick={this.announcements}
-                    >
-                      Announcements
-                    </div>
-                  </li>
-                  <li style={{ paddingTop: "10px" }}>
-                    <div
-                      className="btn sideMenuBtns"
-                      href="#"
-                      style={{
-                        backgroundColor: this.state.button4,
-                        boxShadow: "none"
-                      }}
-                      onMouseEnter={event => onMouseOver(event)}
-                      onMouseOut={event => onMouseOut(event)}
-                      onClick={this.discussions}
-                    >
-                      Discussions
-                    </div>
-                  </li>
-                  <li style={{ paddingTop: "10px" }}>
-                    <div
-                      className="btn sideMenuBtns"
-                      href="#"
-                      style={{
-                        backgroundColor: this.state.button5,
-                        boxShadow: "none"
-                      }}
-                      onMouseEnter={event => onMouseOver(event)}
-                      onMouseOut={event => onMouseOut(event)}
-                      onClick={this.events}
-                    >
-                      Events
-                    </div>
-                  </li>
-                  <li style={{ paddingTop: "10px" }}>
-                    <div
-                      className="btn sideMenuBtns"
-                      href="#"
-                      style={{
-                        backgroundColor: this.state.button6,
-                        boxShadow: "none"
-                      }}
-                      onMouseEnter={event => onMouseOver(event)}
-                      onMouseOut={event => onMouseOut(event)}
-                      onClick={this.members}
-                    >
-                      Members
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="rightCol left-align useFont">
               <img
                 alt="some alt"
                 style={{
@@ -408,43 +301,142 @@ class ClubPage extends Component {
                 }}
                 src={images["citynight.jpg"]}
               />
-              <div>{this.renderForm()}</div>
+            </div>
+            <div className="leftSidebar">
+              <ul style={{ listStyle: "none" }}>
+                <li>
+                  <div
+                    className="btn "
+                    style={{
+                      fontSize: "17px",
+                      backgroundColor: this.state.button1,
+                      width: "175px",
+                      height: "30px",
+                      borderRadius: "10px",
+                      textTransform: "none",
+                      boxShadow: "none",
+                      textAlign: "left",
+                      color: "black"
+                    }}
+                    onMouseEnter={event => onMouseOver(event)}
+                    onMouseOut={event => onMouseOut(event)}
+                    onClick={this.home}
+                  >
+                    {" "}
+                    Home
+                  </div>
+                </li>
+                <li style={{ paddingTop: "10px" }}>
+                  <div
+                    className="btn sideMenuBtns"
+                    href="#"
+                    style={{
+                      backgroundColor: this.state.button2,
+                      boxShadow: "none"
+                    }}
+                    onMouseEnter={event => onMouseOver(event)}
+                    onMouseOut={event => onMouseOut(event)}
+                    onClick={this.about}
+                  >
+                    About
+                  </div>
+                </li>
+                <li style={{ paddingTop: "10px" }}>
+                  <div
+                    className="btn sideMenuBtns"
+                    href="#"
+                    style={{
+                      backgroundColor: this.state.button3,
+                      boxShadow: "none"
+                    }}
+                    onMouseEnter={event => onMouseOver(event)}
+                    onMouseOut={event => onMouseOut(event)}
+                    onClick={this.announcements}
+                  >
+                    Announcements
+                  </div>
+                </li>
+                <li style={{ paddingTop: "10px" }}>
+                  <div
+                    className="btn sideMenuBtns"
+                    href="#"
+                    style={{
+                      backgroundColor: this.state.button4,
+                      boxShadow: "none"
+                    }}
+                    onMouseEnter={event => onMouseOver(event)}
+                    onMouseOut={event => onMouseOut(event)}
+                    onClick={this.discussions}
+                  >
+                    Discussions
+                  </div>
+                </li>
+                <li style={{ paddingTop: "10px" }}>
+                  <div
+                    className="btn sideMenuBtns"
+                    href="#"
+                    style={{
+                      backgroundColor: this.state.button5,
+                      boxShadow: "none"
+                    }}
+                    onMouseEnter={event => onMouseOver(event)}
+                    onMouseOut={event => onMouseOut(event)}
+                    onClick={this.events}
+                  >
+                    Events
+                  </div>
+                </li>
+                <li style={{ paddingTop: "10px" }}>
+                  <div
+                    className="btn sideMenuBtns"
+                    href="#"
+                    style={{
+                      backgroundColor: this.state.button6,
+                      boxShadow: "none"
+                    }}
+                    onMouseEnter={event => onMouseOver(event)}
+                    onMouseOut={event => onMouseOut(event)}
+                    onClick={this.members}
+                  >
+                    Members
+                  </div>
+                </li>
+              </ul>
+            </div>
 
-              <div
-                className="quarterCol left-align useFont"
-                style={{
-                  fontSize: "24px",
-                  fontWeight: "500",
-                  color: "grey",
-                  paddingLeft: "70px",
-                  paddingTop: "50px"
-                }}
-              >
-                Members
-                <br />
-                <div style={{ display: "inline-block" }}>
-                  {this.props.membersArray &&
-                    this.props.membersArray.map(member => (
-                      <img
-                        alt="some alt"
-                        style={{
-                          display: "inline-block",
-                          width: "60px",
-                          height: "60px",
-                          borderRadius: "100%",
-                          paddingRight: "5px"
-                        }}
-                        src={
-                          imagesUsers[
-                            (member + ".png").toString().toLowerCase()
-                          ]
-                        }
-                      />
-                    ))}
-                </div>
-                <div className="circle" style={{ display: "inline-block" }}>
-                  +
-                </div>
+            <div className="content">{this.renderForm()}</div>
+
+            <div
+              className="rightSidebar useFont"
+              style={{
+                fontSize: "24px",
+                fontWeight: "500",
+                color: "grey",
+                paddingTop: "50px"
+              }}
+            >
+              Members
+              <br />
+              <div style={{ display: "inline-block" }}>
+                {this.props.membersArray &&
+                  this.props.membersArray.map(member => (
+                    <img
+                      alt="some alt"
+                      style={{
+                        display: "inline-block",
+                        width: "60px",
+                        height: "60px",
+                        borderRadius: "100%",
+                        paddingRight: "5px"
+                      }}
+                      src={
+                        imagesUsers[(member + ".png").toString().toLowerCase()]
+                      }
+                    />
+                  ))}
+              </div>
+              <div className="circle" style={{ display: "inline-block" }}>
+                +
               </div>
             </div>
           </div>

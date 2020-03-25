@@ -4,7 +4,15 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { registerUser } from "../../actions/authActions";
 import classnames from "classnames";
+import { Form, Input, Button, Checkbox } from "antd";
 
+const layout = {
+  labelCol: { span: 2 },
+  wrapperCol: { span: 16 }
+};
+const tailLayout = {
+  wrapperCol: { offset: 2, span: 16 }
+};
 class Register extends Component {
   constructor() {
     super();
@@ -35,6 +43,8 @@ class Register extends Component {
   }
 
   onChange = e => {
+    console.log(e.target.id);
+    console.log(e.target.value);
     this.setState({ [e.target.id]: e.target.value });
   };
 
@@ -57,122 +67,106 @@ class Register extends Component {
     const { errors } = this.state;
 
     return (
-      <div className="container">
-        <div className="row">
-          <div className="col s8 offset-s2">
+      <div>
+        <div>
+          <Button>
             <Link to="/" className="btn-flat waves-effect">
-              <i className="material-icons left">keyboard_backspace</i> Back to
-              home
+              Back to home
             </Link>
-            <div className="col s12" style={{ paddingLeft: "11.250px" }}>
-              <h4>
-                <b>Register</b> below
-              </h4>
-              <p className="grey-text text-darken-1">
-                Already have an account? <Link to="/login">Log in</Link>
-              </p>
-            </div>
-            <form noValidate onSubmit={this.onSubmit}>
-              <div className="input-field col s12">
-                <input
-                  onChange={this.onChange}
-                  value={this.state.firstName}
-                  error={errors.firstName}
-                  id="firstName"
-                  type="text"
-                  className={classnames("", {
-                    invalid: errors.firstName
-                  })}
-                />
-                <label htmlFor="firstName">First Name</label>
-                <span className="red-text">{errors.firstName}</span>
-              </div>
-              <div className="input-field col s12">
-                <input
-                  onChange={this.onChange}
-                  value={this.state.lastName}
-                  error={errors.lastName}
-                  id="lastName"
-                  type="text"
-                  className={classnames("", {
-                    invalid: errors.lastName
-                  })}
-                />
-                <label htmlFor="lastName">Last Name</label>
-                <span className="red-text">{errors.lastName}</span>
-              </div>
-              <div className="input-field col s12">
-                <input
-                  onChange={this.onChange}
-                  value={this.state.name}
-                  error={errors.name}
-                  id="name"
-                  type="text"
-                  className={classnames("", {
-                    invalid: errors.name
-                  })}
-                />
-                <label htmlFor="name">User Name</label>
-                <span className="red-text">{errors.name}</span>
-              </div>
-              <div className="input-field col s12">
-                <input
-                  onChange={this.onChange}
-                  value={this.state.email}
-                  error={errors.email}
-                  id="email"
-                  type="email"
-                  className={classnames("", {
-                    invalid: errors.email
-                  })}
-                />
-                <label htmlFor="email">Email</label>
-                <span className="red-text">{errors.email}</span>
-              </div>
-              <div className="input-field col s12">
-                <input
-                  onChange={this.onChange}
-                  value={this.state.password}
-                  error={errors.password}
-                  id="password"
-                  type="password"
-                  className={classnames("", {
-                    invalid: errors.password
-                  })}
-                />
-                <label htmlFor="password">Password</label>
-                <span className="red-text">{errors.password}</span>
-              </div>
-              <div className="input-field col s12">
-                <input
-                  onChange={this.onChange}
-                  value={this.state.password2}
-                  error={errors.password2}
-                  id="password2"
-                  type="password"
-                  className={classnames("", {
-                    invalid: errors.password2
-                  })}
-                />
-                <label htmlFor="password2">Confirm Password</label>
-                <span className="red-text">{errors.password2}</span>
-              </div>
-              <div className="col s12" style={{ paddingLeft: "11.250px" }}>
-                <button
-                  style={{
-                    width: "150px",
-                    borderRadius: "3px",
-                    letterSpacing: "1.5px",
-                    marginTop: "1rem"
-                  }}
-                  type="submit"
-                  className="btn btn-large waves-effect waves-light hoverable blue accent-3"
-                >
-                  Sign up
-                </button>
-              </div>
-            </form>
+          </Button>
+
+          <div className="col s12" style={{ paddingLeft: "11.250px" }}>
+            <h1>
+              <b>Register below</b>
+            </h1>
+            <p className="grey-text text-darken-1">
+              Already have an account?{" "}
+              <Button>
+                <Link to="/login">Log in</Link>
+              </Button>
+            </p>
           </div>
+          <Form
+            {...layout}
+            name="basic"
+            initialValues={{ remember: true }}
+            onFinish={this.onFinish}
+            onFinishFailed={this.onFinishFailed}
+          >
+            <Form.Item
+              label="First Name"
+              name="firstName"
+              rules={[
+                { required: true, message: "Please input your first name!" }
+              ]}
+            >
+              <Input id="firstName" onChange={this.onChange} />
+              <span className="red-text">{errors.firstName}</span>
+            </Form.Item>
+
+            <Form.Item
+              label="Last Name"
+              name="lastName"
+              rules={[
+                { required: true, message: "Please input your last name!" }
+              ]}
+            >
+              <Input id="lastName" onChange={this.onChange} />
+              <span className="red-text">{errors.lastName}</span>
+            </Form.Item>
+
+            <Form.Item
+              label="Username"
+              name="name"
+              rules={[
+                { required: true, message: "Please input your username!" }
+              ]}
+            >
+              <Input id="name" onChange={this.onChange} />
+              <span className="red-text">{errors.name}</span>
+            </Form.Item>
+
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[{ required: true, message: "Please input your email!" }]}
+            >
+              <Input id="email" error={errors.email} onChange={this.onChange} />
+              <span className="red-text">{errors.email}</span>
+            </Form.Item>
+
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[
+                { required: true, message: "Please input your password!" }
+              ]}
+            >
+              <Input.Password id="password" onChange={this.onChange} />
+              <span className="red-text">{errors.password}</span>
+            </Form.Item>
+
+            <Form.Item
+              label="Confirm Password"
+              name="password2"
+              rules={[
+                { required: true, message: "Please confirm your password!" }
+              ]}
+            >
+              <Input.Password id="password2" onChange={this.onChange} />
+              <span className="red-text">{errors.password2}</span>
+            </Form.Item>
+
+            <Form.Item {...tailLayout} name="remember" valuePropName="checked">
+              <Checkbox>Remember me</Checkbox>
+            </Form.Item>
+
+            <Form.Item {...tailLayout}>
+              <Button type="primary" htmlType="submit" onClick={this.onSubmit}>
+                Submit
+              </Button>
+            </Form.Item>
+          </Form>
         </div>
       </div>
     );
@@ -190,7 +184,4 @@ const mapStateToProps = state => ({
   errors: state.errors
 });
 
-export default connect(
-  mapStateToProps,
-  { registerUser }
-)(withRouter(Register));
+export default connect(mapStateToProps, { registerUser })(withRouter(Register));

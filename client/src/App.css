@@ -1,5 +1,8 @@
 @import "~antd/dist/antd.css";
 
+.red-text {
+  color: red;
+}
 .remove-btn {
   margin-right: 0.5rem;
 }

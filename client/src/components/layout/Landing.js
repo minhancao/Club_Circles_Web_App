@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "../../App.css";
+import { Button } from "antd";
 
 function importAll(r) {
   let images = {};
@@ -87,38 +88,39 @@ class Landing extends Component {
               members in ways you never thought were possible.
             </p>
             <br />
-
-            <Link
-              className="btn waves-effect waves-light hoverable black-text white accent-3"
-              to="/register"
-              style={{
-                fontFamily: "Avenir Next",
-                fontSize: "16px",
-                width: "250px",
-                borderRadius: "100px",
-                letterSpacing: "1.5px",
-                textTransform: "none",
-                position: "relative",
-
-                marginRight: "30px"
-              }}
-            >
-              Create a Club
-            </Link>
-            <Link
-              className="btn waves-effect waves-light hoverable black-text white accent-3"
-              to="/login"
-              style={{
-                fontFamily: "Avenir Next",
-                fontSize: "16px",
-                width: "250px",
-                borderRadius: "100px",
-                letterSpacing: "1.5px",
-                textTransform: "none"
-              }}
-            >
-              Join a Club
-            </Link>
+            <Button>
+              <Link
+                className="btn waves-effect waves-light hoverable black-text white accent-3"
+                to="/register"
+                style={{
+                  fontFamily: "Avenir Next",
+                  fontSize: "16px",
+                  width: "250px",
+                  borderRadius: "100px",
+                  letterSpacing: "1.5px",
+                  textTransform: "none",
+                  position: "relative"
+                }}
+              >
+                Create a Club
+              </Link>
+            </Button>
+            <Button>
+              <Link
+                className="btn waves-effect waves-light hoverable black-text white accent-3"
+                to="/login"
+                style={{
+                  fontFamily: "Avenir Next",
+                  fontSize: "16px",
+                  width: "250px",
+                  borderRadius: "100px",
+                  letterSpacing: "1.5px",
+                  textTransform: "none"
+                }}
+              >
+                Join a Club
+              </Link>
+            </Button>
           </div>
           <div className="column">
             <img

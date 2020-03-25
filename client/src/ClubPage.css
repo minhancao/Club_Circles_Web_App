@@ -1,0 +1,28 @@
+.clubPageContainer {
+  min-height: 300px;
+  width: 100%;
+  background: LightGray;
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-rows: 1fr 4fr 1fr;
+  grid-gap: 10px;
+  grid-template-areas:
+    "header header header"
+    "leftSidebar content rightSidebar";
+}
+
+.header {
+  grid-area: header;
+}
+
+.leftSidebar {
+  grid-area: leftSidebar;
+}
+
+.content {
+  grid-area: content;
+}
+
+.rightSidebar {
+  grid-area: rightSidebar;
+}
