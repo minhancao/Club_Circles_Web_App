@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "../../App.css";
-import { Button } from "antd";
+import { Button, Row, Col } from "antd";
 
 function importAll(r) {
   let images = {};
@@ -28,35 +28,84 @@ const onMouseOut = event => {
 class Landing extends Component {
   render() {
     return (
-      <div>
-        {/* <header
-          class="w3-display-container w3-content w3-wide"
-          style={{ maxWidth: 1920 }}
-          id="home"
-        >
-          <div>
+      <div
+        style={{
+          paddingTop: "220px",
+          height: "100vh",
+          backgroundColor: "#40E0D0",
+        }}
+      >
+        <Row style={{ marginRight: "50px", marginLeft: "80px", width: "auto" }}>
+          <Col xs={24} sm={8} md={12}>
+            <h1
+              style={{
+                fontFamily: "Avenir Next",
+                fontSize:
+                  "calc(50px + (26 - 14) * ((100vw - 300px) / (1600 - 300)))",
+                fontWeight: "520",
+              }}
+            >
+              Connect with your members like never before.
+            </h1>
+            <p
+              className="flow-text white-text text-darken-1"
+              style={{
+                fontFamily: "Avenir Next",
+                fontSize: "16px",
+              }}
+            >
+              Create a club, join your favorite group, and interact with members
+              in ways you never thought were possible.
+            </p>
+            <Button>
+              <Link
+                className="btn waves-effect waves-light hoverable black-text white accent-3"
+                to="/register"
+                style={{
+                  fontFamily: "Avenir Next",
+                  fontSize: "16px",
+                  width: "250px",
+                  borderRadius: "100px",
+                  letterSpacing: "1.5px",
+                  textTransform: "none",
+                  position: "relative",
+                }}
+              >
+                Create a Club
+              </Link>
+            </Button>
+            <Button>
+              <Link
+                className="btn waves-effect waves-light hoverable black-text white accent-3"
+                to="/login"
+                style={{
+                  fontFamily: "Avenir Next",
+                  fontSize: "16px",
+                  width: "250px",
+                  borderRadius: "100px",
+                  letterSpacing: "1.5px",
+                  textTransform: "none",
+                }}
+              >
+                Join a Club
+              </Link>
+            </Button>
+          </Col>
+          <Col xs={24} sm={16} md={12}>
             <img
-              class="w3-image"
-              src={images["bestHomePic.jpg"]}
-              alt="Architecture"
+              alt="some alt"
+              src={images["laptopandphone.png"]}
+              style={{
+                width: "95%",
+                height: "auto",
+              }}
             />
-            <div class="topmiddle1 w3-margin-top w3-center">
-              <h1 class="w3-xxlarge w3-text-white">
-                <span class="w3-hide-small w3-text-light-grey">
-                  Create and manage your clubs.
-                </span>
-              </h1>
-            </div>
-            <div class="bottommiddle1 w3-margin-top w3-center">
-              <h1 class="w3-xxlarge w3-text-white">
-                <span class="w3-padding w3-black w3-opacity-min">
-                  <b>Club</b> Circles
-                </span>
-              </h1>
-            </div>
-          </div>
-        </header> */}
-        <div
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={24} sm={8} md={12}></Col>
+        </Row>
+        {/* <div
           className="row"
           style={{
             height: "100vh",
@@ -135,7 +184,7 @@ class Landing extends Component {
               }}
             />
           </div>
-        </div>
+        </div> */}
       </div>
     );
   }

@@ -3,16 +3,16 @@ import "./App.css";
 import "./ClubPage.css";
 import axios from "axios";
 import { connect } from "react-redux";
-import { getClub, putClub } from "./actions/clubActions";
+import { getClubs, getClub, putClub } from "./actions/clubActions";
 import PropTypes from "prop-types";
 import { Button } from "antd";
 
-const onMouseOver = event => {
+const onMouseOver = (event) => {
   const el = event.target;
   el.style.color = "#40E0D0";
 };
 
-const onMouseOut = event => {
+const onMouseOut = (event) => {
   const el = event.target;
   el.style.color = "black";
 };
@@ -49,6 +49,9 @@ class ClubPage extends Component {
 
   constructor(props) {
     super(props);
+    console.log(this.props.match.params.clubId);
+    let curr = this.props.match.params.clubId || "";
+    this.props.getClubs();
     this.state = {
       display: "home",
       button1: "#C0C0C0",
@@ -58,38 +61,37 @@ class ClubPage extends Component {
       button5: "white",
       button6: "white",
       club: {},
-      membersArray: []
+      membersArray: [],
+      clubId: curr,
     }; //this is how you set up state
   }
-
-  componentDidMount() {}
 
   onNewEvent = () => {
     const tempPush = {
       events: {
         name: "TestEvent123",
         dateOfEvent: "2019-06-29",
-        description: "Test Event Description"
-      }
+        description: "Test Event Description",
+      },
     };
-    this.props.putClub(this.props.location.clubId, tempPush);
+    this.props.putClub(this.state.clubId, tempPush);
   };
 
   onNewAnnouncement = () => {
     const tempPush = {
       announcements: {
         name: "Announcement Test",
-        announcement: "Announcement description..."
-      }
+        announcement: "Announcement description...",
+      },
     };
-    this.props.putClub(this.props.location.clubId, tempPush);
+    this.props.putClub(this.state.clubId, tempPush);
   };
 
   // Render the content
   renderForm = () => {
     // What page should show?
     const club1 = this.props.clubs.clubs.find(
-      item => item._id === this.props.location.clubId
+      (item) => item._id === this.state.clubId
     );
     console.log(club1);
     console.log(this.props.auth);
@@ -235,7 +237,7 @@ class ClubPage extends Component {
       button3: "white",
       button4: "white",
       button5: "white",
-      button6: "white"
+      button6: "white",
     });
   };
   // Create a function that will update the state in parent
@@ -264,30 +266,19 @@ class ClubPage extends Component {
     this.setState({ display: "members", button6: "#C0C0C0" });
   };
   render() {
-    const club1 = this.props.clubs.clubs.find(
-      item => item._id === this.props.location.clubId
-    );
+    const { clubs } = this.props.clubs;
+    const club1 = clubs.find((item) => item._id === this.state.clubId);
     return (
       <div>
-        {this.props.clubs && (
+        {club1 && (
           <div className="clubPageContainer" style={{ paddingTop: "80px" }}>
             <div className="header">
-              <h1
-                style={{
-                  paddingTop: "50px",
-                  fontFamily: "Avenir Next",
-                  color: "grey",
-                  zoom: 0.8
-                }}
-              >
-                {club1.name}
-              </h1>
               <img
                 alt="some alt"
                 style={{
                   marginTop: "20px",
                   width: "150px",
-                  height: "160px"
+                  height: "160px",
                 }}
                 src={images["clublogo.png"]}
               />
@@ -297,7 +288,7 @@ class ClubPage extends Component {
                   marginTop: "45px",
 
                   width: "1100px",
-                  height: "390px"
+                  height: "390px",
                 }}
                 src={images["citynight.jpg"]}
               />
@@ -306,20 +297,13 @@ class ClubPage extends Component {
               <ul style={{ listStyle: "none" }}>
                 <li>
                   <div
-                    className="btn "
+                    className="btn sideMenuBtns"
                     style={{
-                      fontSize: "17px",
                       backgroundColor: this.state.button1,
-                      width: "175px",
-                      height: "30px",
-                      borderRadius: "10px",
-                      textTransform: "none",
                       boxShadow: "none",
-                      textAlign: "left",
-                      color: "black"
                     }}
-                    onMouseEnter={event => onMouseOver(event)}
-                    onMouseOut={event => onMouseOut(event)}
+                    onMouseEnter={(event) => onMouseOver(event)}
+                    onMouseOut={(event) => onMouseOut(event)}
                     onClick={this.home}
                   >
                     {" "}
@@ -332,10 +316,10 @@ class ClubPage extends Component {
                     href="#"
                     style={{
                       backgroundColor: this.state.button2,
-                      boxShadow: "none"
+                      boxShadow: "none",
                     }}
-                    onMouseEnter={event => onMouseOver(event)}
-                    onMouseOut={event => onMouseOut(event)}
+                    onMouseEnter={(event) => onMouseOver(event)}
+                    onMouseOut={(event) => onMouseOut(event)}
                     onClick={this.about}
                   >
                     About
@@ -347,10 +331,10 @@ class ClubPage extends Component {
                     href="#"
                     style={{
                       backgroundColor: this.state.button3,
-                      boxShadow: "none"
+                      boxShadow: "none",
                     }}
-                    onMouseEnter={event => onMouseOver(event)}
-                    onMouseOut={event => onMouseOut(event)}
+                    onMouseEnter={(event) => onMouseOver(event)}
+                    onMouseOut={(event) => onMouseOut(event)}
                     onClick={this.announcements}
                   >
                     Announcements
@@ -362,10 +346,10 @@ class ClubPage extends Component {
                     href="#"
                     style={{
                       backgroundColor: this.state.button4,
-                      boxShadow: "none"
+                      boxShadow: "none",
                     }}
-                    onMouseEnter={event => onMouseOver(event)}
-                    onMouseOut={event => onMouseOut(event)}
+                    onMouseEnter={(event) => onMouseOver(event)}
+                    onMouseOut={(event) => onMouseOut(event)}
                     onClick={this.discussions}
                   >
                     Discussions
@@ -377,10 +361,10 @@ class ClubPage extends Component {
                     href="#"
                     style={{
                       backgroundColor: this.state.button5,
-                      boxShadow: "none"
+                      boxShadow: "none",
                     }}
-                    onMouseEnter={event => onMouseOver(event)}
-                    onMouseOut={event => onMouseOut(event)}
+                    onMouseEnter={(event) => onMouseOver(event)}
+                    onMouseOut={(event) => onMouseOut(event)}
                     onClick={this.events}
                   >
                     Events
@@ -392,10 +376,10 @@ class ClubPage extends Component {
                     href="#"
                     style={{
                       backgroundColor: this.state.button6,
-                      boxShadow: "none"
+                      boxShadow: "none",
                     }}
-                    onMouseEnter={event => onMouseOver(event)}
-                    onMouseOut={event => onMouseOut(event)}
+                    onMouseEnter={(event) => onMouseOver(event)}
+                    onMouseOut={(event) => onMouseOut(event)}
                     onClick={this.members}
                   >
                     Members
@@ -412,14 +396,14 @@ class ClubPage extends Component {
                 fontSize: "24px",
                 fontWeight: "500",
                 color: "grey",
-                paddingTop: "50px"
+                paddingTop: "50px",
               }}
             >
               Members
               <br />
               <div style={{ display: "inline-block" }}>
                 {this.props.membersArray &&
-                  this.props.membersArray.map(member => (
+                  this.props.membersArray.map((member) => (
                     <img
                       alt="some alt"
                       style={{
@@ -427,7 +411,7 @@ class ClubPage extends Component {
                         width: "60px",
                         height: "60px",
                         borderRadius: "100%",
-                        paddingRight: "5px"
+                        paddingRight: "5px",
                       }}
                       src={
                         imagesUsers[(member + ".png").toString().toLowerCase()]
@@ -447,15 +431,18 @@ class ClubPage extends Component {
 }
 
 ClubPage.propTypes = {
+  getClubs: PropTypes.func.isRequired,
   getClub: PropTypes.func.isRequired,
   putClub: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   clubs: state.clubs,
   membersArray: state.clubs.club.members,
-  auth: state.auth
+  auth: state.auth,
 });
 
-export default connect(mapStateToProps, { getClub, putClub })(ClubPage);
+export default connect(mapStateToProps, { getClubs, getClub, putClub })(
+  ClubPage
+);

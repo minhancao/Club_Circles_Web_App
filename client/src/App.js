@@ -15,6 +15,7 @@ import Dashboard from "./components/dashboard/Dashboard";
 import CustomLayout from "./components/layout/CustomLayout";
 import { BrowserRouter } from "react-router-dom";
 import { Route, Switch, Link } from "react-router-dom";
+import ScrollToTop from "./ScrollToTop";
 
 // Check for token to keep user logged in
 if (localStorage.jwtToken) {
@@ -57,7 +58,7 @@ const DefaultContainer = () => (
     <CustomLayout>
       <Route exact path="/" component={Landing} />
       <Route exact path="/clubspage" component={ClubsPage} />
-      <Route exact path="/clubpage" component={ClubPage} />
+      <Route exact path="/clubpage/:clubId" component={ClubPage} />
       <Switch>
         <PrivateRoute exact path="/dashboard" component={Dashboard} />
       </Switch>
@@ -71,6 +72,7 @@ class App extends Component {
       <Provider store={store}>
         <div className="App">
           <BrowserRouter>
+            <ScrollToTop />
             <Switch>
               <Route exact path="/(login)" component={LoginContainer} />
               <Route exact path="/(register)" component={RegisterContainer} />

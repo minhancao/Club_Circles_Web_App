@@ -31,14 +31,13 @@ const onMouseOut = event => {
   el.style.color = "#707070";
 }; */
 
-const onMouseOver2 = event => {
+const onMouseOver2 = (event) => {
   const el = event.target;
   el.style.opacity = "0.6";
 };
 
-const onMouseOut2 = event => {
+const onMouseOut2 = (event) => {
   const el = event.target;
-  el.style.color = "white";
   el.style.opacity = "1.0";
 };
 
@@ -47,37 +46,43 @@ class ClubsList extends Component {
     this.props.getClubs();
   }
 
-  onDeleteClick = id => {
+  onDeleteClick = (id) => {
     this.props.deleteClub(id);
   };
 
-  onGoClick = id => {
-    this.props.getClub(id);
+  onGoClick = (id) => {
     console.log(this.props.clubs.club.members);
   };
 
   render() {
+    console.log(this.props.auth);
     const { clubs } = this.props.clubs;
     return (
-      <div className="w3-content w3-padding" style={{ maxWidth: "1920px" }}>
-        <div className="w3-container w3-padding-32" id="about">
-          <h3 className="w3-border-bottom w3-border-light-grey w3-padding-16">
-            My Clubs
-          </h3>
+      <div
+        style={{
+          maxWidth: "1920px",
+          paddingTop: "75px",
+          marginRight: "50px",
+          marginLeft: "80px",
+          width: "auto",
+        }}
+      >
+        <div>
+          <h3>My Clubs</h3>
           <p>
             Manage your clubs by creating a new club, leaving a club, or editing
             a club.
           </p>
         </div>
 
-        <ClubModal></ClubModal>
+        {this.props.auth.isAuthenticated ? <ClubModal></ClubModal> : null}
 
-        <Row>
+        <Row gutter={[16, 16]}>
           {clubs.map(
             ({ _id, name, description, category, location, members }) => (
-              <Col span={8} key={_id}>
+              <Col xs={24} sm={24} md={12} lg={12} xl={8} key={_id}>
                 <Card
-                  style={{ width: 300 }}
+                  style={{ maxWidth: "80%", marginBottom: "20px" }}
                   cover={
                     <img
                       alt="some alt"
@@ -88,29 +93,13 @@ class ClubsList extends Component {
                   actions={[
                     <Link
                       onClick={this.onGoClick.bind(this, _id)}
-                      to={{
-                        pathname: "/ClubPage",
-                        clubId: _id
-                      }}
-                      style={{
-                        fontFamily: "Avenir Next",
-                        fontWeight: "600",
-                        backgroundColor: "#40E0D0",
-                        width: "160px",
-                        height: "35px",
-                        borderRadius: "100px",
-                        letterSpacing: "1.5px",
-                        textTransform: "none",
-                        boxShadow: "none"
-                      }}
+                      to={"/ClubPage/" + _id}
                       className="btn"
-                      onMouseEnter={event => onMouseOver2(event)}
-                      onMouseOut={event => onMouseOut2(event)}
                     >
                       Go To Club
                     </Link>,
                     <Icon type="edit" />,
-                    <Icon type="ellipsis" />
+                    <Icon type="ellipsis" />,
                   ]}
                 >
                   <Meta
@@ -139,14 +128,15 @@ class ClubsList extends Component {
 
 ClubsList.propTypes = {
   getClubs: PropTypes.func.isRequired,
-  getClub: PropTypes.func.isRequired
+  getClub: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
-  clubs: state.clubs
+const mapStateToProps = (state) => ({
+  clubs: state.clubs,
+  auth: state.auth,
 });
 
-export default connect(
-  mapStateToProps,
-  { getClubs, deleteClub, getClub }
-)(ClubsList);
+export default connect(mapStateToProps, { getClubs, deleteClub, getClub })(
+  ClubsList
+);
