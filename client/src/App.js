@@ -9,7 +9,7 @@ import Landing from "./components/layout/Landing";
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import ClubsPage from "./ClubsPage";
-import ClubPage from "./ClubPage";
+import ClubPage from "./components/clubs/ClubPage";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import Dashboard from "./components/dashboard/Dashboard";
 import CustomLayout from "./components/layout/CustomLayout";

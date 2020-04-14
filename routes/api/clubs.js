@@ -5,7 +5,7 @@ const router = express.Router();
 const Club = require("../../models/Club");
 
 router.get("/:id", (req, res) => {
-  Club.findById(req.params.id).then(club => res.json(club));
+  Club.findById(req.params.id).then((club) => res.json(club));
 });
 
 // @route GET api/items
@@ -14,7 +14,7 @@ router.get("/:id", (req, res) => {
 router.get("/", (req, res) => {
   Club.find()
     .sort({ name: -1 })
-    .then(items => res.json(items));
+    .then((items) => res.json(items));
 });
 
 // @route POST api/items
@@ -28,10 +28,10 @@ router.post("/", (req, res) => {
     location: req.body.location,
     president: req.body.president,
     staff: req.body.staff,
-    members: req.body.members
+    members: req.body.members,
   });
 
-  newClub.save().then(item => res.json(item));
+  newClub.save().then((item) => res.json(item));
 });
 
 // @route DELETE api/items/:id
@@ -39,8 +39,8 @@ router.post("/", (req, res) => {
 // @access Public
 router.delete("/:id", (req, res) => {
   Club.findById(req.params.id)
-    .then(item => item.remove().then(() => res.json({ success: true })))
-    .catch(err => res.status(404).json({ success: false }));
+    .then((item) => item.remove().then(() => res.json({ success: true })))
+    .catch((err) => res.status(404).json({ success: false }));
 });
 
 // update club
@@ -69,16 +69,60 @@ router.put("/edit/announcements/:id/:id2", (req, res) => {
     {
       $set: {
         "announcements.$.name": req.body.name,
-        "announcements.$.announcement": req.body.announcement
-      }
+        "announcements.$.announcement": req.body.announcement,
+      },
     },
-    { sort: { _id: -1 }, upsert: true },
     (err, result) => {
       if (err) return res.json(err);
     }
   )
-    .then(item => res.json(item))
-    .catch(err => res.status(404).json({ success: false }));
+    .then((item) => res.json(item))
+    .catch((err) => res.status(404).json({ success: false }));
+});
+
+// removing an announcement
+router.put("/delete/announcements/:id/:id2", (req, res) => {
+  Club.updateOne(
+    { _id: req.params.id },
+    { $pull: { announcements: { _id: req.params.id2 } } },
+    (err, result) => {
+      if (err) return res.json(err);
+    }
+  )
+    .then((item) => res.json(item))
+    .catch((err) => res.status(404).json({ success: false }));
+});
+
+// editting an event
+router.put("/edit/events/:id/:id2", (req, res) => {
+  Club.findOneAndUpdate(
+    { _id: req.params.id, "events._id": req.params.id2 },
+    {
+      $set: {
+        "events.$.name": req.body.name,
+        "events.$.dateOfEvent": req.body.dateOfEvent,
+        "events.$.description": req.body.description,
+      },
+    },
+    (err, result) => {
+      if (err) return res.json(err);
+    }
+  )
+    .then((item) => res.json(item))
+    .catch((err) => res.status(404).json({ success: false }));
+});
+
+// removing an event
+router.put("/delete/events/:id/:id2", (req, res) => {
+  Club.updateOne(
+    { _id: req.params.id },
+    { $pull: { events: { _id: req.params.id2 } } },
+    (err, result) => {
+      if (err) return res.json(err);
+    }
+  )
+    .then((item) => res.json(item))
+    .catch((err) => res.status(404).json({ success: false }));
 });
 
 module.exports = router;

@@ -4,61 +4,111 @@ import {
   GET_CLUB,
   ADD_CLUB,
   DELETE_CLUB,
-  CLUBS_LOADING
+  CLUBS_LOADING,
 } from "./types";
 
-export const getClubs = () => dispatch => {
+export const getClubs = () => (dispatch) => {
   dispatch(setClubsLoading());
-  axios.get("/api/clubs").then(res =>
+  axios.get("/api/clubs").then((res) =>
     dispatch({
       type: GET_CLUBS,
-      payload: res.data
+      payload: res.data,
     })
   );
 };
 
-export const getClub = id => dispatch => {
+export const getClub = (id) => (dispatch) => {
   dispatch(setClubsLoading());
-  axios.get(`/api/clubs/${id}`).then(res =>
+  axios.get(`/api/clubs/${id}`).then((res) =>
     dispatch({
       type: GET_CLUB,
-      payload: res.data
+      payload: res.data,
     })
   );
 };
 
-export const putClub = (id, item) => dispatch => {
+export const putClub = (id, item) => (dispatch) => {
   dispatch(setClubsLoading());
   axios.put(`/api/clubs/add/${id}`, item).then(
-    axios.get("/api/clubs").then(res =>
+    axios.get("/api/clubs").then((res) =>
       dispatch({
         type: GET_CLUBS,
-        payload: res.data
+        payload: res.data,
       })
     )
   );
 };
 
-export const deleteClub = id => dispatch => {
-  axios.delete(`/api/clubs/${id}`).then(res =>
+export const editClubAnnouncement = (id, announcementId, item) => (
+  dispatch
+) => {
+  dispatch(setClubsLoading());
+  axios.put(`/api/clubs/edit/announcements/${id}/${announcementId}`, item).then(
+    axios.get("/api/clubs").then((res) =>
+      dispatch({
+        type: GET_CLUBS,
+        payload: res.data,
+      })
+    )
+  );
+};
+
+export const editClubEvent = (id, eventId, item) => (dispatch) => {
+  dispatch(setClubsLoading());
+  axios.put(`/api/clubs/edit/events/${id}/${eventId}`, item).then(
+    axios.get("/api/clubs").then((res) =>
+      dispatch({
+        type: GET_CLUBS,
+        payload: res.data,
+      })
+    )
+  );
+};
+
+export const deleteClub = (id) => (dispatch) => {
+  axios.delete(`/api/clubs/${id}`).then((res) =>
     dispatch({
       type: DELETE_CLUB,
-      payload: id
+      payload: id,
     })
   );
 };
 
-export const addClub = item => dispatch => {
-  axios.post("/api/clubs", item).then(res =>
+export const deleteClubAnnouncement = (id, announcementId) => (dispatch) => {
+  dispatch(setClubsLoading());
+  axios.put(`/api/clubs/delete/announcements/${id}/${announcementId}`).then(
+    axios.get("/api/clubs").then((res) =>
+      dispatch({
+        type: GET_CLUBS,
+        payload: res.data,
+      })
+    )
+  );
+};
+
+export const deleteClubEvent = (id, eventId) => (dispatch) => {
+  dispatch(setClubsLoading());
+  axios.put(`/api/clubs/delete/events/${id}/${eventId}`).then(
+    axios.get("/api/clubs").then((res) =>
+      dispatch({
+        type: GET_CLUBS,
+        payload: res.data,
+      })
+    )
+  );
+};
+
+export const addClub = (item) => (dispatch) => {
+  axios.post("/api/clubs", item).then((res) =>
     dispatch({
       type: ADD_CLUB,
-      payload: res.data
+      payload: res.data,
     })
   );
 };
 
 export const setClubsLoading = () => {
   return {
-    type: CLUBS_LOADING
+    type: CLUBS_LOADING,
   };
 };

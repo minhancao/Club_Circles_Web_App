@@ -1,11 +1,21 @@
 import React, { Component } from "react";
-import "./App.css";
 import "./ClubPage.css";
 import axios from "axios";
 import { connect } from "react-redux";
-import { getClubs, getClub, putClub } from "./actions/clubActions";
+import {
+  getClubs,
+  getClub,
+  putClub,
+  deleteClubEvent,
+  editClubEvent,
+  deleteClubAnnouncement,
+} from "../../actions/clubActions";
 import PropTypes from "prop-types";
-import { Button } from "antd";
+import { Skeleton, Switch, Card, Avatar, Button, Icon } from "antd";
+import EventModal from "./EventModal";
+import AnnouncementModal from "./AnnouncementModal";
+
+const { Meta } = Card;
 
 const onMouseOver = (event) => {
   const el = event.target;
@@ -26,11 +36,11 @@ function importAll(r) {
 }
 
 const images = importAll(
-  require.context("./components/images", false, /\.(png|jpe?g|svg)$/)
+  require.context("../images", false, /\.(png|jpe?g|svg)$/)
 );
 
 const imagesUsers = importAll(
-  require.context("./components/images/users", false, /\.(png|jpe?g|svg)$/)
+  require.context("../images/users", false, /\.(png|jpe?g|svg)$/)
 );
 
 class ClubPage extends Component {
@@ -85,6 +95,13 @@ class ClubPage extends Component {
       },
     };
     this.props.putClub(this.state.clubId, tempPush);
+  };
+
+  deleteEvent = (id) => {
+    this.props.deleteClubEvent(this.state.clubId, id);
+  };
+  deleteAnnouncement = (id) => {
+    this.props.deleteClubAnnouncement(this.state.clubId, id);
   };
 
   // Render the content
@@ -147,12 +164,28 @@ class ClubPage extends Component {
             </b>
             <br />
             <Button onClick={this.onNewAnnouncement}>New Announcement</Button>
-            {club1.announcements.map(({ name, announcement }) => (
-              <div>
-                <div>Name: {name}</div>
-                <div>Announcement: {announcement}</div>
-                <br />
-              </div>
+            {club1.announcements.map(({ name, announcement, _id }) => (
+              <Card
+                style={{ width: "300", marginTop: 16 }}
+                actions={[
+                  <AnnouncementModal
+                    name={name}
+                    clubId={this.state.clubId}
+                    announcementId={_id}
+                  ></AnnouncementModal>,
+                  <div onClick={() => this.deleteAnnouncement(_id)}>
+                    <Icon type="delete"></Icon>
+                  </div>,
+                ]}
+              >
+                <Meta
+                  avatar={
+                    <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                  }
+                  title={name}
+                  description={<div> {announcement}</div>}
+                />
+              </Card>
             ))}
           </div>
         ); //pass method to child
@@ -183,13 +216,33 @@ class ClubPage extends Component {
             </b>
             <br />
             <Button onClick={this.onNewEvent}>New Event</Button>
-            {club1.events.map(({ name, description, dateOfEvent }) => (
-              <div>
-                <div>Event: {name}</div>
-                <div>Description: {description}</div>
-                <div>Date of Event: {dateOfEvent}</div>
-                <br />
-              </div>
+            {club1.events.map(({ name, description, dateOfEvent, _id }) => (
+              <Card
+                style={{ width: "300", marginTop: 16 }}
+                actions={[
+                  <EventModal
+                    name={name}
+                    clubId={this.state.clubId}
+                    eventId={_id}
+                  ></EventModal>,
+                  <div onClick={() => this.deleteEvent(_id)}>
+                    <Icon type="delete"></Icon>
+                  </div>,
+                ]}
+              >
+                <Meta
+                  avatar={
+                    <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                  }
+                  title={name}
+                  description={
+                    <div>
+                      <div>Date of Event: {dateOfEvent}</div>
+                      <div>Description: {description}</div>
+                    </div>
+                  }
+                />
+              </Card>
             ))}
           </div>
         ); //pass method to child
@@ -434,6 +487,9 @@ ClubPage.propTypes = {
   getClubs: PropTypes.func.isRequired,
   getClub: PropTypes.func.isRequired,
   putClub: PropTypes.func.isRequired,
+  deleteClubEvent: PropTypes.func.isRequired,
+  editClubEvent: PropTypes.func.isRequired,
+  deleteClubAnnouncement: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
 };
 
@@ -443,6 +499,11 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { getClubs, getClub, putClub })(
-  ClubPage
-);
+export default connect(mapStateToProps, {
+  getClubs,
+  getClub,
+  putClub,
+  deleteClubEvent,
+  editClubEvent,
+  deleteClubAnnouncement,
+})(ClubPage);
