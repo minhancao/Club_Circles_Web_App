@@ -4,6 +4,8 @@ const router = express.Router();
 // Club Model
 const Club = require("../../models/Club");
 
+var ObjectId = require("mongodb").ObjectID;
+
 router.get("/:id", (req, res) => {
   Club.findById(req.params.id).then((club) => res.json(club));
 });
@@ -44,14 +46,109 @@ router.delete("/:id", (req, res) => {
 });
 
 // update club
-// This is for adding to announcements, events, etc.
+// This is for adding to announcements, events, discussions
 router.put("/add/:id", (req, res) => {
   Club.findOneAndUpdate(
     { _id: req.params.id },
-    { $push: req.body },
-    { sort: { _id: -1 }, upsert: true },
+    { $addToSet: req.body },
     (err, result) => {
       if (err) return res.json(err);
+    }
+  )
+    .then((item) => res.json(item))
+    .catch((err) => res.status(404).json({ success: false }));
+});
+
+// adding to a discussion, (posting to a discussion)
+router.put("/add/discussions/:clubId/:discussionId", (req, res) => {
+  Club.findOneAndUpdate(
+    { _id: req.params.clubId, "discussions._id": req.params.discussionId },
+    {
+      $addToSet: {
+        "discussions.$.comments": req.body,
+      },
+    },
+    { new: true },
+    (err, result) => {
+      if (err) return res.json(err);
+      else return res.json(result);
+    }
+  );
+});
+
+// This is for editting discussions
+router.put("/edit/discussions/:clubId/:discussionId", (req, res) => {
+  Club.findOneAndUpdate(
+    { _id: req.params.clubId, "discussions._id": req.params.discussionId },
+    {
+      $set: {
+        "discussions.$.name": req.body.name,
+        "discussions.$.discussion": req.body.discussion,
+      },
+    },
+    { new: true },
+    (err, result) => {
+      if (err) return res.json(err);
+      else return res.json(result);
+    }
+  );
+});
+
+// This is for editting discussion comment
+// https://stackoverflow.com/questions/23577123/updating-a-nested-array-with-mongodb
+// https://stackoverflow.com/questions/48594481/selecting-and-updating-a-nested-object-by-its-objectid-in-mongoose-js
+router.put("/edit/discussions/:clubId/:discussionId/:commentId", (req, res) => {
+  const query = {
+    _id: req.params.clubId,
+  };
+
+  const update = {
+    $set: {
+      "discussions.$[discussion].comments.$[comment].username":
+        req.body.username,
+      "discussions.$[discussion].comments.$[comment].comment": req.body.comment,
+    },
+  };
+  const options = {
+    new: true,
+    arrayFilters: [
+      { "discussion._id": new ObjectId(req.params.discussionId) },
+      { "comment._id": new ObjectId(req.params.commentId) },
+    ],
+  };
+  const newItemReturn = { new: true };
+  // update the document
+  Club.findOneAndUpdate(query, update, options, function (error, result) {
+    if (error) {
+      res.json(error);
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+// removing a discussion
+router.put("/delete/discussions/:id/:id2", (req, res) => {
+  Club.updateOne(
+    { _id: req.params.id },
+    { $pull: { discussions: { _id: req.params.id2 } } },
+    { new: true },
+    (err, result) => {
+      if (err) return res.json(err);
+      else return res.json(result);
+    }
+  );
+});
+
+// removing a discussion comment
+router.put("/delete/discussions/:id/:id2/:id3", (req, res) => {
+  Club.updateOne(
+    { _id: req.params.id, "discussions._id": req.params.id2 },
+    { $pull: { "discussions.$.comments": { _id: req.params.id3 } } },
+    { new: true },
+    (err, result) => {
+      if (err) return res.json(err);
+      else return res.json(result);
     }
   );
 });

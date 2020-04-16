@@ -3,84 +3,94 @@ const Schema = mongoose.Schema;
 const announcementsSchema = new Schema({
   name: {
     type: String,
-    default: "Default Announcement Name"
+    default: "Default Announcement Name",
   },
   announcement: {
     type: String,
-    default: "Default Announcement"
+    default: "Default Announcement",
   },
   date: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
+});
+const commentSchema = new Schema({
+  username: {
+    type: String,
+    default: "default_username",
+  },
+  comment: {
+    type: String,
+    default: "default comment",
+  },
 });
 const discussionsSchema = new Schema({
   name: {
     type: String,
-    default: "Default Discussion Name"
+    default: "Default Discussion Name",
   },
   discussion: {
     type: String,
-    default: "Default Discussion"
+    default: "Default Discussion",
   },
   date: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
-  discussions: [String]
+  comments: [commentSchema],
 });
 const eventsSchema = new Schema({
   name: {
     type: String,
-    default: "Default Event Name"
+    default: "Default Event Name",
   },
   dateOfEvent: {
     type: String,
-    default: "Default Date of Event"
+    default: "Default Date of Event",
   },
   description: {
     type: String,
-    default: "Default Description"
+    default: "Default Description",
   },
   date: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 // Create Schema
 const ClubSchema = new Schema({
   name: {
     type: String,
-    default: "Default Club Name"
+    default: "Default Club Name",
   },
   description: {
     type: String,
-    default: "Default Club Description"
+    default: "Default Club Description",
   },
   category: {
     type: String,
-    default: "Default Club Category"
+    default: "Default Club Category",
   },
   location: {
     type: String,
-    default: "Default Club Location"
+    default: "Default Club Location",
   },
   president: {
     type: String,
-    default: "Default President"
+    default: "Default President",
   },
   date: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   about: {
     type: String,
-    default: "Default About"
+    default: "Default About",
   },
   announcements: [announcementsSchema],
   discussions: [discussionsSchema],
   events: [eventsSchema],
   members: [String],
-  staff: [String]
+  staff: [String],
 });
 module.exports = Club = mongoose.model("clubs", ClubSchema);

@@ -11,9 +11,24 @@ import {
   deleteClubAnnouncement,
 } from "../../actions/clubActions";
 import PropTypes from "prop-types";
-import { Skeleton, Switch, Card, Avatar, Button, Icon } from "antd";
+import {
+  Skeleton,
+  Switch,
+  Card,
+  Avatar,
+  Button,
+  Icon,
+  Comment,
+  Tooltip,
+  List,
+  Form,
+  Input,
+} from "antd";
 import EventModal from "./EventModal";
 import AnnouncementModal from "./AnnouncementModal";
+import moment from "moment";
+
+const { TextArea } = Input;
 
 const { Meta } = Card;
 
@@ -191,6 +206,71 @@ class ClubPage extends Component {
         ); //pass method to child
 
       case "discussions":
+        const data = [
+          {
+            actions: [<span key="comment-list-reply-to-0">Reply to</span>],
+            author: "Han Solo",
+            avatar:
+              "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+            content: (
+              <p>
+                We supply a series of design principles, practical patterns and
+                high quality design resources (Sketch and Axure), to help people
+                create their product prototypes beautifully and efficiently.
+              </p>
+            ),
+            datetime: (
+              <Tooltip
+                title={moment()
+                  .subtract(1, "days")
+                  .format("YYYY-MM-DD HH:mm:ss")}
+              >
+                <span>{moment().subtract(1, "days").fromNow()}</span>
+              </Tooltip>
+            ),
+          },
+          {
+            actions: [<span key="comment-list-reply-to-0">Reply to</span>],
+            author: "Han Solo",
+            avatar:
+              "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+            content: (
+              <p>
+                We supply a series of design principles, practical patterns and
+                high quality design resources (Sketch and Axure), to help people
+                create their product prototypes beautifully and efficiently.
+              </p>
+            ),
+            datetime: (
+              <Tooltip
+                title={moment()
+                  .subtract(2, "days")
+                  .format("YYYY-MM-DD HH:mm:ss")}
+              >
+                <span>{moment().subtract(2, "days").fromNow()}</span>
+              </Tooltip>
+            ),
+          },
+        ];
+
+        const Editor = ({ onChange, onSubmit, submitting, value }) => (
+          <div>
+            <Form.Item>
+              <TextArea rows={4} onChange={onChange} value={value} />
+            </Form.Item>
+            <Form.Item>
+              <Button
+                htmlType="submit"
+                loading={submitting}
+                onClick={onSubmit}
+                type="primary"
+              >
+                Add Comment
+              </Button>
+            </Form.Item>
+          </div>
+        );
+
         return (
           <div //Discussions
             className="halfCol useFont"
@@ -200,8 +280,66 @@ class ClubPage extends Component {
               Discussions
             </b>
             <br />
-            doiasjfioajfiaojfioajfioa sjfioasj fioaehgiu aehgu iah iuah uiahgau
-            ighaiu hga iugha iu aiuhkdlfjakdjfad fadhuig hu
+            {club1.discussions.map(({ _id, name, discussion, comments }) => (
+              <Card
+                style={{ width: "300", marginTop: 16 }}
+                actions={[
+                  <EventModal
+                    name={name}
+                    clubId={this.state.clubId}
+                    eventId={_id}
+                  ></EventModal>,
+                  <div onClick={() => this.deleteEvent(_id)}>
+                    <Icon type="delete"></Icon>
+                  </div>,
+                ]}
+              >
+                <Meta
+                  avatar={
+                    <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                  }
+                  title={name}
+                  description={
+                    <div>
+                      <div>Discussion: {discussion}</div>
+                      <List
+                        className="comment-list"
+                        header={`${data.length} replies`}
+                        itemLayout="horizontal"
+                        dataSource={data}
+                        renderItem={(item) => (
+                          <li>
+                            <Comment
+                              actions={item.actions}
+                              author={item.author}
+                              avatar={item.avatar}
+                              content={item.content}
+                              datetime={item.datetime}
+                            />
+                          </li>
+                        )}
+                      />
+                      <Comment
+                        avatar={
+                          <Avatar
+                            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                            alt="Han Solo"
+                          />
+                        }
+                        content={
+                          <Editor
+                            onChange={this.handleChange}
+                            onSubmit={this.handleSubmit}
+                            submitting={false}
+                            value={""}
+                          />
+                        }
+                      />
+                    </div>
+                  }
+                />
+              </Card>
+            ))}
           </div>
         ); //pass method to child
 
