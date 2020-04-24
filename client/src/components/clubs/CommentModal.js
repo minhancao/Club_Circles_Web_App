@@ -8,20 +8,16 @@ import {
   Checkbox,
   Radio,
   message,
+  Tooltip,
 } from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { editClubAnnouncement } from "../../actions/clubActions";
+import { editClubDiscussionComment } from "../../actions/clubActions";
 import { USER_LOADING } from "../../actions/types";
 
-class AnnouncementModal extends Component {
+class CommentModal extends Component {
   state = {
     visible: false,
-    name: "",
-    description: "",
-    category: "",
-    location: "",
-    currentUser: this.props.auth.user,
   };
 
   showModal = () => {
@@ -38,22 +34,25 @@ class AnnouncementModal extends Component {
       if (err) {
         return;
       }
+      const { user } = this.props.auth;
+      console.log(this.props);
       const editItem = {
-        name: values.name,
-        announcement: values.announcement,
+        username: user.name,
+        comment: values.comment,
       };
-
+      console.log(editItem);
       // Add item via addItem action
-      this.props.editClubAnnouncement(
+      this.props.editClubDiscussionComment(
         this.props.clubId,
-        this.props.announcementId,
+        this.props.discussionId,
+        this.props.commentId,
         editItem
       );
 
       // Close modal
       this.handleCancel();
       form.resetFields();
-      message.success("Announcement " + values.name + " successfully editted!");
+      message.success("Comment successfully editted!");
     });
   };
 
@@ -61,48 +60,31 @@ class AnnouncementModal extends Component {
     this.formRef = formRef;
   };
 
-  onSubmit = (e) => {
-    e.preventDefault();
-
-    const { user } = this.props.auth;
-    const newItem = {
-      name: this.state.name,
-      description: this.state.description,
-      category: this.state.category,
-      location: this.state.location,
-      president: user.name,
-      staff: [user.name],
-      members: [user.name, "minhancao", "ryanhong", "randytau"],
-    };
-
-    // Add item via addItem action
-    this.props.addClub(newItem);
-
-    // Close modal
-    this.handleCancel();
-  };
-
   render() {
     const { name, clubId, eventId } = this.props;
     const CollectionCreateForm = Form.create({ name: "form_in_modal" })(
       class extends React.Component {
         render() {
-          const { visible, onCancel, onCreate, form } = this.props;
+          const { visible, onCancel, onCreate, form, user } = this.props;
           const { getFieldDecorator } = form;
           return (
             <Modal
               visible={visible}
-              title={"Editting Announcement: " + name}
+              title={"Editting Comment"}
               okText="Confirm"
               onCancel={onCancel}
               onOk={onCreate}
             >
               <Form layout="vertical">
-                <Form.Item label="Name">
-                  {getFieldDecorator("name")(<Input type="textarea" />)}
+                <Form.Item label="Posting user">
+                  <Input
+                    type="textarea"
+                    disabled="true"
+                    value={user.user.name ? user.user.name : ""}
+                  />
                 </Form.Item>
-                <Form.Item label="Announcement">
-                  {getFieldDecorator("announcement")(<Input type="textarea" />)}
+                <Form.Item label="Comment">
+                  {getFieldDecorator("comment")(<Input type="textarea" />)}
                 </Form.Item>
               </Form>
             </Modal>
@@ -113,7 +95,9 @@ class AnnouncementModal extends Component {
     return (
       <div>
         <div onClick={this.showModal}>
-          <Icon type="edit" />
+          <Tooltip title="Edit">
+            <Icon type="edit" />
+          </Tooltip>
         </div>
         <CollectionCreateForm
           wrappedComponentRef={this.saveFormRef}
@@ -126,7 +110,7 @@ class AnnouncementModal extends Component {
     );
   }
 }
-AnnouncementModal.propTypes = {
+CommentModal.propTypes = {
   auth: PropTypes.object.isRequired,
 };
 
@@ -135,6 +119,6 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { editClubAnnouncement })(
-  AnnouncementModal
+export default connect(mapStateToProps, { editClubDiscussionComment })(
+  CommentModal
 );

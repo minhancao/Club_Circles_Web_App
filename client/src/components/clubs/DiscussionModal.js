@@ -11,10 +11,10 @@ import {
 } from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { editClubAnnouncement } from "../../actions/clubActions";
+import { editClubDiscussion } from "../../actions/clubActions";
 import { USER_LOADING } from "../../actions/types";
 
-class AnnouncementModal extends Component {
+class DiscussionModal extends Component {
   state = {
     visible: false,
     name: "",
@@ -38,22 +38,24 @@ class AnnouncementModal extends Component {
       if (err) {
         return;
       }
+      const { user } = this.props.auth;
       const editItem = {
+        username: user.name,
         name: values.name,
-        announcement: values.announcement,
+        discussion: values.discussion,
       };
 
       // Add item via addItem action
-      this.props.editClubAnnouncement(
+      this.props.editClubDiscussion(
         this.props.clubId,
-        this.props.announcementId,
+        this.props.discussionId,
         editItem
       );
 
       // Close modal
       this.handleCancel();
       form.resetFields();
-      message.success("Announcement " + values.name + " successfully editted!");
+      message.success("Discussion " + values.name + " successfully editted!");
     });
   };
 
@@ -87,22 +89,29 @@ class AnnouncementModal extends Component {
     const CollectionCreateForm = Form.create({ name: "form_in_modal" })(
       class extends React.Component {
         render() {
-          const { visible, onCancel, onCreate, form } = this.props;
+          const { visible, onCancel, onCreate, form, user } = this.props;
           const { getFieldDecorator } = form;
           return (
             <Modal
               visible={visible}
-              title={"Editting Announcement: " + name}
+              title={"Editting Discussion: " + name}
               okText="Confirm"
               onCancel={onCancel}
               onOk={onCreate}
             >
               <Form layout="vertical">
-                <Form.Item label="Name">
+                <Form.Item label="Posting user">
+                  <Input
+                    type="textarea"
+                    disabled="true"
+                    value={user.user.name ? user.user.name : ""}
+                  />
+                </Form.Item>
+                <Form.Item label="Topic">
                   {getFieldDecorator("name")(<Input type="textarea" />)}
                 </Form.Item>
-                <Form.Item label="Announcement">
-                  {getFieldDecorator("announcement")(<Input type="textarea" />)}
+                <Form.Item label="Discussion">
+                  {getFieldDecorator("discussion")(<Input type="textarea" />)}
                 </Form.Item>
               </Form>
             </Modal>
@@ -126,7 +135,7 @@ class AnnouncementModal extends Component {
     );
   }
 }
-AnnouncementModal.propTypes = {
+DiscussionModal.propTypes = {
   auth: PropTypes.object.isRequired,
 };
 
@@ -135,6 +144,6 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { editClubAnnouncement })(
-  AnnouncementModal
+export default connect(mapStateToProps, { editClubDiscussion })(
+  DiscussionModal
 );

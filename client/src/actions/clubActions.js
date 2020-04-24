@@ -39,6 +39,49 @@ export const putClub = (id, item) => (dispatch) => {
   );
 };
 
+export const addDiscussionComment = (id, discussionId, item) => (dispatch) => {
+  dispatch(setClubsLoading());
+  axios.put(`/api/clubs/add/discussions/${id}/${discussionId}`, item).then(
+    axios.get("/api/clubs").then((res) =>
+      dispatch({
+        type: GET_CLUBS,
+        payload: res.data,
+      })
+    )
+  );
+};
+
+export const editClubDiscussion = (id, discussionId, item) => (dispatch) => {
+  dispatch(setClubsLoading());
+  axios.put(`/api/clubs/edit/discussions/${id}/${discussionId}`, item).then(
+    axios.get("/api/clubs").then((res) =>
+      dispatch({
+        type: GET_CLUBS,
+        payload: res.data,
+      })
+    )
+  );
+};
+
+export const editClubDiscussionComment = (
+  id,
+  discussionId,
+  commentId,
+  item
+) => (dispatch) => {
+  dispatch(setClubsLoading());
+  axios
+    .put(`/api/clubs/edit/discussions/${id}/${discussionId}/${commentId}`, item)
+    .then(
+      axios.get("/api/clubs").then((res) =>
+        dispatch({
+          type: GET_CLUBS,
+          payload: res.data,
+        })
+      )
+    );
+};
+
 export const editClubAnnouncement = (id, announcementId, item) => (
   dispatch
 ) => {
@@ -72,6 +115,34 @@ export const deleteClub = (id) => (dispatch) => {
       payload: id,
     })
   );
+};
+
+export const deleteClubDiscussion = (id, discussionId) => (dispatch) => {
+  dispatch(setClubsLoading());
+  axios.put(`/api/clubs/delete/discussions/${id}/${discussionId}`).then(
+    axios.get("/api/clubs").then((res) =>
+      dispatch({
+        type: GET_CLUBS,
+        payload: res.data,
+      })
+    )
+  );
+};
+
+export const deleteClubDiscussionComment = (id, discussionId, commentId) => (
+  dispatch
+) => {
+  dispatch(setClubsLoading());
+  axios
+    .put(`/api/clubs/delete/discussions/${id}/${discussionId}/${commentId}`)
+    .then(
+      axios.get("/api/clubs").then((res) =>
+        dispatch({
+          type: GET_CLUBS,
+          payload: res.data,
+        })
+      )
+    );
 };
 
 export const deleteClubAnnouncement = (id, announcementId) => (dispatch) => {

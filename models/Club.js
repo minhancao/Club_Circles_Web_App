@@ -23,8 +23,16 @@ const commentSchema = new Schema({
     type: String,
     default: "default comment",
   },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
 });
 const discussionsSchema = new Schema({
+  username: {
+    type: String,
+    default: "Default author",
+  },
   name: {
     type: String,
     default: "Default Discussion Name",

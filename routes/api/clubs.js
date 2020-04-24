@@ -51,15 +51,15 @@ router.put("/add/:id", (req, res) => {
   Club.findOneAndUpdate(
     { _id: req.params.id },
     { $addToSet: req.body },
+    { new: true },
     (err, result) => {
       if (err) return res.json(err);
+      else return res.json(result);
     }
-  )
-    .then((item) => res.json(item))
-    .catch((err) => res.status(404).json({ success: false }));
+  );
 });
 
-// adding to a discussion, (posting to a discussion)
+// adding a comment to a discussion, (posting to a discussion)
 router.put("/add/discussions/:clubId/:discussionId", (req, res) => {
   Club.findOneAndUpdate(
     { _id: req.params.clubId, "discussions._id": req.params.discussionId },

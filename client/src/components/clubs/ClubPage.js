@@ -9,6 +9,9 @@ import {
   deleteClubEvent,
   editClubEvent,
   deleteClubAnnouncement,
+  deleteClubDiscussion,
+  addDiscussionComment,
+  deleteClubDiscussionComment,
 } from "../../actions/clubActions";
 import PropTypes from "prop-types";
 import {
@@ -26,6 +29,9 @@ import {
 } from "antd";
 import EventModal from "./EventModal";
 import AnnouncementModal from "./AnnouncementModal";
+import DiscussionModal from "./DiscussionModal";
+import CommentModal from "./CommentModal";
+import NewDiscussionModal from "./NewDiscussionModal";
 import moment from "moment";
 
 const { TextArea } = Input;
@@ -88,6 +94,8 @@ class ClubPage extends Component {
       club: {},
       membersArray: [],
       clubId: curr,
+      comment: "",
+      submitting: false,
     }; //this is how you set up state
   }
 
@@ -117,6 +125,28 @@ class ClubPage extends Component {
   };
   deleteAnnouncement = (id) => {
     this.props.deleteClubAnnouncement(this.state.clubId, id);
+  };
+
+  deleteDiscussion = (id) => {
+    this.props.deleteClubDiscussion(this.state.clubId, id);
+  };
+
+  handleDiscussionCommentChange = (e) => {
+    this.setState({ comment: e.target.value });
+  };
+
+  handleDiscussionCommentSubmit = (discussionId) => {
+    this.setState({ submitting: true });
+    setTimeout(() => {
+      const { user } = this.props.auth;
+      const item = { username: user.name, comment: this.state.comment };
+      console.log(this.state.clubId);
+      console.log(discussionId);
+      this.props.addDiscussionComment(this.state.clubId, discussionId, item);
+      this.setState({
+        submitting: false,
+      });
+    }, 1000);
   };
 
   // Render the content
@@ -279,67 +309,104 @@ class ClubPage extends Component {
             <b style={{ fontWeight: "600", fontSize: "48px", color: "black" }}>
               Discussions
             </b>
+            {this.props.auth.isAuthenticated ? (
+              <NewDiscussionModal
+                clubId={this.state.clubId}
+              ></NewDiscussionModal>
+            ) : null}
             <br />
-            {club1.discussions.map(({ _id, name, discussion, comments }) => (
-              <Card
-                style={{ width: "300", marginTop: 16 }}
-                actions={[
-                  <EventModal
-                    name={name}
-                    clubId={this.state.clubId}
-                    eventId={_id}
-                  ></EventModal>,
-                  <div onClick={() => this.deleteEvent(_id)}>
-                    <Icon type="delete"></Icon>
-                  </div>,
-                ]}
-              >
-                <Meta
-                  avatar={
-                    <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                  }
-                  title={name}
-                  description={
-                    <div>
-                      <div>Discussion: {discussion}</div>
-                      <List
-                        className="comment-list"
-                        header={`${data.length} replies`}
-                        itemLayout="horizontal"
-                        dataSource={data}
-                        renderItem={(item) => (
-                          <li>
-                            <Comment
-                              actions={item.actions}
-                              author={item.author}
-                              avatar={item.avatar}
-                              content={item.content}
-                              datetime={item.datetime}
-                            />
-                          </li>
-                        )}
-                      />
-                      <Comment
-                        avatar={
-                          <Avatar
-                            src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                            alt="Han Solo"
-                          />
-                        }
-                        content={
-                          <Editor
-                            onChange={this.handleChange}
-                            onSubmit={this.handleSubmit}
-                            submitting={false}
-                            value={""}
-                          />
-                        }
-                      />
-                    </div>
-                  }
-                />
-              </Card>
-            ))}
+            {club1.discussions.map(
+              ({ _id, name, username, discussion, comments }) => (
+                <Card
+                  style={{ width: "300", marginTop: 16 }}
+                  actions={[
+                    <DiscussionModal
+                      name={name}
+                      clubId={this.state.clubId}
+                      discussionId={_id}
+                    ></DiscussionModal>,
+                    <div onClick={() => this.deleteDiscussion(_id)}>
+                      <Icon type="delete"></Icon>
+                    </div>,
+                  ]}
+                >
+                  <Meta
+                    title={
+                      <div>
+                        {name} - Posted by {username}
+                      </div>
+                    }
+                    description={
+                      <div>
+                        <div>Discussion: {discussion}</div>
+                        <List
+                          className="comment-list"
+                          header={`${data.length} replies`}
+                          itemLayout="horizontal"
+                          dataSource={comments}
+                          renderItem={(item) => (
+                            <li>
+                              <Comment
+                                actions={[
+                                  <div style={{ cursor: "pointer" }}>
+                                    <CommentModal
+                                      clubId={this.state.clubId}
+                                      discussionId={_id}
+                                      commentId={item._id}
+                                    ></CommentModal>
+                                  </div>,
+                                  <div
+                                    style={{ cursor: "pointer" }}
+                                    onClick={this.props.deleteClubDiscussionComment.bind(
+                                      this,
+                                      this.state.clubId,
+                                      _id,
+                                      item._id
+                                    )}
+                                  >
+                                    <Tooltip title="Delete">
+                                      <Icon type="delete"></Icon>
+                                    </Tooltip>
+                                  </div>,
+                                ]}
+                                author={item.username}
+                                content={item.comment}
+                              />
+                            </li>
+                          )}
+                        />
+                        <Comment
+                          content={
+                            <div>
+                              <Form.Item>
+                                <TextArea
+                                  rows={4}
+                                  onChange={this.handleDiscussionCommentChange}
+                                  value={this.state.comment}
+                                />
+                              </Form.Item>
+                              <Form.Item>
+                                <Button
+                                  htmlType="submit"
+                                  loading={this.state.submitting}
+                                  onClick={this.handleDiscussionCommentSubmit.bind(
+                                    this,
+                                    _id
+                                  )}
+                                  type="primary"
+                                >
+                                  Add Comment
+                                </Button>
+                              </Form.Item>
+                            </div>
+                          }
+                        />
+                      </div>
+                    }
+                  />
+                </Card>
+              )
+            )}
           </div>
         ); //pass method to child
 
@@ -628,6 +695,7 @@ ClubPage.propTypes = {
   deleteClubEvent: PropTypes.func.isRequired,
   editClubEvent: PropTypes.func.isRequired,
   deleteClubAnnouncement: PropTypes.func.isRequired,
+  deleteClubDiscussion: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
 };
 
@@ -644,4 +712,7 @@ export default connect(mapStateToProps, {
   deleteClubEvent,
   editClubEvent,
   deleteClubAnnouncement,
+  deleteClubDiscussion,
+  addDiscussionComment,
+  deleteClubDiscussionComment,
 })(ClubPage);
