@@ -71,7 +71,7 @@ class Landing extends Component {
                   position: "relative",
                 }}
               >
-                Create a Club
+                Register
               </Link>
             </Button>
             <Button>
@@ -87,7 +87,7 @@ class Landing extends Component {
                   textTransform: "none",
                 }}
               >
-                Join a Club
+                Login
               </Link>
             </Button>
           </Col>

@@ -8,10 +8,10 @@ import { Form, Input, Button, Checkbox } from "antd";
 
 const layout = {
   labelCol: { span: 2 },
-  wrapperCol: { span: 16 }
+  wrapperCol: { span: 16 },
 };
 const tailLayout = {
-  wrapperCol: { offset: 2, span: 16 }
+  wrapperCol: { offset: 2, span: 16 },
 };
 
 class Login extends Component {
@@ -20,7 +20,7 @@ class Login extends Component {
     this.state = {
       email: "",
       password: "",
-      errors: {}
+      errors: {},
     };
   }
 
@@ -38,21 +38,21 @@ class Login extends Component {
 
     if (nextProps.errors) {
       this.setState({
-        errors: nextProps.errors
+        errors: nextProps.errors,
       });
     }
   }
 
-  onChange = e => {
+  onChange = (e) => {
     this.setState({ [e.target.id]: e.target.value });
   };
 
-  onSubmit = e => {
+  onSubmit = (e) => {
     e.preventDefault();
 
     const userData = {
       email: this.state.email,
-      password: this.state.password
+      password: this.state.password,
     };
 
     this.props.loginUser(userData);
@@ -92,7 +92,7 @@ class Login extends Component {
                 label="Email"
                 name="email"
                 rules={[
-                  { required: true, message: "Please input your email!" }
+                  { required: true, message: "Please input your email!" },
                 ]}
               >
                 <Input id="email" onChange={this.onChange} />
@@ -107,10 +107,10 @@ class Login extends Component {
                 label="Password"
                 name="password"
                 rules={[
-                  { required: true, message: "Please input your password!" }
+                  { required: true, message: "Please input your password!" },
                 ]}
               >
-                <Input id="password" onChange={this.onChange} />
+                <Input.Password id="password" onChange={this.onChange} />
                 <span className="red-text">
                   {errors.password}
                   {errors.passwordincorrect}
@@ -132,10 +132,10 @@ class Login extends Component {
 Login.propTypes = {
   loginUser: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired,
 };
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   auth: state.auth,
-  errors: state.errors
+  errors: state.errors,
 });
 export default connect(mapStateToProps, { loginUser })(Login);

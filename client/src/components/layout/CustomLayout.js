@@ -10,14 +10,11 @@ class CustomLayout extends React.Component {
       <div>
         <Layout className="layout">
           <ToggleNavbar />
-          <Content style={{ padding: "0 0px" }}>
+          <Content style={{ padding: "0 0px", backgroundColor: "#40E0D0" }}>
             <div style={{ background: "#fff", padding: 0, minHeight: 280 }}>
               {this.props.children}
             </div>
           </Content>
-          <Footer style={{ textAlign: "center" }}>
-            Club Circles ©2019 Created by minhancao
-          </Footer>
         </Layout>
       </div>
     );

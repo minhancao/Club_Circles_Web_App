@@ -31,7 +31,7 @@ import EventModal from "./EventModal";
 import AnnouncementModal from "./AnnouncementModal";
 import DiscussionModal from "./DiscussionModal";
 import CommentModal from "./CommentModal";
-import NewDiscussionModal from "./NewDiscussionModal";
+import NewModal from "./NewModal";
 import moment from "moment";
 
 const { TextArea } = Input;
@@ -164,10 +164,6 @@ class ClubPage extends Component {
             className="halfCol useFont"
             style={{ paddingTop: "33px", color: "grey", fontSize: "18px" }}
           >
-            {this.props.auth.isAuthenticated &&
-            this.props.auth.user.name == club1.president ? (
-              <button>Edit Club</button>
-            ) : null}
             {club1.category} <br />
             <b style={{ fontWeight: "600", fontSize: "48px", color: "black" }}>
               {club1.name}
@@ -208,20 +204,31 @@ class ClubPage extends Component {
               Announcements
             </b>
             <br />
-            <Button onClick={this.onNewAnnouncement}>New Announcement</Button>
+            {this.props.auth.isAuthenticated &&
+            club1.staff.indexOf(this.props.auth.user.name) > -1 ? (
+              <NewModal
+                clubId={this.state.clubId}
+                modalType="announcement"
+              ></NewModal>
+            ) : null}
             {club1.announcements.map(({ name, announcement, _id }) => (
               <Card
                 style={{ width: "300", marginTop: 16 }}
-                actions={[
-                  <AnnouncementModal
-                    name={name}
-                    clubId={this.state.clubId}
-                    announcementId={_id}
-                  ></AnnouncementModal>,
-                  <div onClick={() => this.deleteAnnouncement(_id)}>
-                    <Icon type="delete"></Icon>
-                  </div>,
-                ]}
+                actions={
+                  this.props.auth.isAuthenticated &&
+                  club1.staff.indexOf(this.props.auth.user.name) > -1
+                    ? [
+                        <AnnouncementModal
+                          name={name}
+                          clubId={this.state.clubId}
+                          announcementId={_id}
+                        ></AnnouncementModal>,
+                        <div onClick={() => this.deleteAnnouncement(_id)}>
+                          <Icon type="delete"></Icon>
+                        </div>,
+                      ]
+                    : null
+                }
               >
                 <Meta
                   avatar={
@@ -309,26 +316,33 @@ class ClubPage extends Component {
             <b style={{ fontWeight: "600", fontSize: "48px", color: "black" }}>
               Discussions
             </b>
-            {this.props.auth.isAuthenticated ? (
-              <NewDiscussionModal
+            {this.props.auth.isAuthenticated &&
+            club1.staff.indexOf(this.props.auth.user.name) > -1 ? (
+              <NewModal
                 clubId={this.state.clubId}
-              ></NewDiscussionModal>
+                modalType="discussion"
+              ></NewModal>
             ) : null}
             <br />
             {club1.discussions.map(
               ({ _id, name, username, discussion, comments }) => (
                 <Card
                   style={{ width: "300", marginTop: 16 }}
-                  actions={[
-                    <DiscussionModal
-                      name={name}
-                      clubId={this.state.clubId}
-                      discussionId={_id}
-                    ></DiscussionModal>,
-                    <div onClick={() => this.deleteDiscussion(_id)}>
-                      <Icon type="delete"></Icon>
-                    </div>,
-                  ]}
+                  actions={
+                    this.props.auth.isAuthenticated &&
+                    club1.staff.indexOf(this.props.auth.user.name) > -1
+                      ? [
+                          <DiscussionModal
+                            name={name}
+                            clubId={this.state.clubId}
+                            discussionId={_id}
+                          ></DiscussionModal>,
+                          <div onClick={() => this.deleteDiscussion(_id)}>
+                            <Icon type="delete"></Icon>
+                          </div>,
+                        ]
+                      : null
+                  }
                 >
                   <Meta
                     title={
@@ -341,66 +355,75 @@ class ClubPage extends Component {
                         <div>Discussion: {discussion}</div>
                         <List
                           className="comment-list"
-                          header={`${data.length} replies`}
+                          header=""
                           itemLayout="horizontal"
                           dataSource={comments}
                           renderItem={(item) => (
                             <li>
                               <Comment
-                                actions={[
-                                  <div style={{ cursor: "pointer" }}>
-                                    <CommentModal
-                                      clubId={this.state.clubId}
-                                      discussionId={_id}
-                                      commentId={item._id}
-                                    ></CommentModal>
-                                  </div>,
-                                  <div
-                                    style={{ cursor: "pointer" }}
-                                    onClick={this.props.deleteClubDiscussionComment.bind(
-                                      this,
-                                      this.state.clubId,
-                                      _id,
-                                      item._id
-                                    )}
-                                  >
-                                    <Tooltip title="Delete">
-                                      <Icon type="delete"></Icon>
-                                    </Tooltip>
-                                  </div>,
-                                ]}
+                                actions={
+                                  this.props.auth.isAuthenticated &&
+                                  item.username === this.props.auth.user.name
+                                    ? [
+                                        <div style={{ cursor: "pointer" }}>
+                                          <CommentModal
+                                            clubId={this.state.clubId}
+                                            discussionId={_id}
+                                            commentId={item._id}
+                                          ></CommentModal>
+                                        </div>,
+                                        <div
+                                          style={{ cursor: "pointer" }}
+                                          onClick={this.props.deleteClubDiscussionComment.bind(
+                                            this,
+                                            this.state.clubId,
+                                            _id,
+                                            item._id
+                                          )}
+                                        >
+                                          <Tooltip title="Delete">
+                                            <Icon type="delete"></Icon>
+                                          </Tooltip>
+                                        </div>,
+                                      ]
+                                    : null
+                                }
                                 author={item.username}
                                 content={item.comment}
                               />
                             </li>
                           )}
                         />
-                        <Comment
-                          content={
-                            <div>
-                              <Form.Item>
-                                <TextArea
-                                  rows={4}
-                                  onChange={this.handleDiscussionCommentChange}
-                                  value={this.state.comment}
-                                />
-                              </Form.Item>
-                              <Form.Item>
-                                <Button
-                                  htmlType="submit"
-                                  loading={this.state.submitting}
-                                  onClick={this.handleDiscussionCommentSubmit.bind(
-                                    this,
-                                    _id
-                                  )}
-                                  type="primary"
-                                >
-                                  Add Comment
-                                </Button>
-                              </Form.Item>
-                            </div>
-                          }
-                        />
+
+                        {this.props.auth.isAuthenticated ? (
+                          <Comment
+                            content={
+                              <div>
+                                <Form.Item>
+                                  <TextArea
+                                    rows={4}
+                                    onChange={
+                                      this.handleDiscussionCommentChange
+                                    }
+                                  />
+                                </Form.Item>
+                                <Form.Item>
+                                  <Button
+                                    htmlType="submit"
+                                    loading={this.state.submitting}
+                                    onClick={this.handleDiscussionCommentSubmit.bind(
+                                      this,
+                                      _id
+                                    )}
+                                    type="primary"
+                                  >
+                                    Add Comment
+                                  </Button>
+                                </Form.Item>
+                              </div>
+                            }
+                          />
+                        ) : null}
                       </div>
                     }
                   />
@@ -420,20 +443,28 @@ class ClubPage extends Component {
               Events
             </b>
             <br />
-            <Button onClick={this.onNewEvent}>New Event</Button>
+            {this.props.auth.isAuthenticated &&
+            club1.staff.indexOf(this.props.auth.user.name) > -1 ? (
+              <NewModal clubId={this.state.clubId} modalType="event"></NewModal>
+            ) : null}
             {club1.events.map(({ name, description, dateOfEvent, _id }) => (
               <Card
                 style={{ width: "300", marginTop: 16 }}
-                actions={[
-                  <EventModal
-                    name={name}
-                    clubId={this.state.clubId}
-                    eventId={_id}
-                  ></EventModal>,
-                  <div onClick={() => this.deleteEvent(_id)}>
-                    <Icon type="delete"></Icon>
-                  </div>,
-                ]}
+                actions={
+                  this.props.auth.isAuthenticated &&
+                  club1.staff.indexOf(this.props.auth.user.name) > -1
+                    ? [
+                        <EventModal
+                          name={name}
+                          clubId={this.state.clubId}
+                          eventId={_id}
+                        ></EventModal>,
+                        <div onClick={() => this.deleteEvent(_id)}>
+                          <Icon type="delete"></Icon>
+                        </div>,
+                      ]
+                    : null
+                }
               >
                 <Meta
                   avatar={
@@ -462,8 +493,22 @@ class ClubPage extends Component {
               Members
             </b>
             <br />
-            doiasjfioajfiaojfioajfioa sjfioasj fioaehgiu aehgu iah iuah uiahgau
-            ighaiu hga iugha iu aiuhkdlfjakdjfad fadhuig hu
+            {club1.members.map((member) => (
+              <div>
+                <img
+                  alt="some alt"
+                  style={{
+                    display: "inline-block",
+                    width: "60px",
+                    height: "60px",
+                    borderRadius: "100%",
+                    paddingRight: "5px",
+                  }}
+                  src={imagesUsers[(member + ".png").toString().toLowerCase()]}
+                />
+                {member}
+              </div>
+            ))}
           </div>
         ); //pass method to child
 
@@ -647,40 +692,6 @@ class ClubPage extends Component {
             </div>
 
             <div className="content">{this.renderForm()}</div>
-
-            <div
-              className="rightSidebar useFont"
-              style={{
-                fontSize: "24px",
-                fontWeight: "500",
-                color: "grey",
-                paddingTop: "50px",
-              }}
-            >
-              Members
-              <br />
-              <div style={{ display: "inline-block" }}>
-                {this.props.membersArray &&
-                  this.props.membersArray.map((member) => (
-                    <img
-                      alt="some alt"
-                      style={{
-                        display: "inline-block",
-                        width: "60px",
-                        height: "60px",
-                        borderRadius: "100%",
-                        paddingRight: "5px",
-                      }}
-                      src={
-                        imagesUsers[(member + ".png").toString().toLowerCase()]
-                      }
-                    />
-                  ))}
-              </div>
-              <div className="circle" style={{ display: "inline-block" }}>
-                +
-              </div>
-            </div>
           </div>
         )}
       </div>
