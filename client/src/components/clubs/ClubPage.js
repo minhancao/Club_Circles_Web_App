@@ -6,7 +6,9 @@ import {
   getClubs,
   getClub,
   putClub,
+  deleteClub,
   deleteClubEvent,
+  editClub,
   editClubEvent,
   deleteClubAnnouncement,
   deleteClubDiscussion,
@@ -26,6 +28,7 @@ import {
   List,
   Form,
   Input,
+  Layout,
 } from "antd";
 import EventModal from "./EventModal";
 import AnnouncementModal from "./AnnouncementModal";
@@ -33,7 +36,9 @@ import DiscussionModal from "./DiscussionModal";
 import CommentModal from "./CommentModal";
 import NewModal from "./NewModal";
 import moment from "moment";
+import { Link } from "react-router-dom";
 
+const { Sider, Content } = Layout;
 const { TextArea } = Input;
 
 const { Meta } = Card;
@@ -96,8 +101,55 @@ class ClubPage extends Component {
       clubId: curr,
       comment: "",
       submitting: false,
-    }; //this is how you set up state
+      editMode: false,
+      clubName: "",
+      category: "",
+      location: "",
+      description: "",
+      about: "",
+      collapsed: false,
+      isDesktop: false,
+    };
+    this.updatePredicate = this.updatePredicate.bind(this);
   }
+
+  componentDidMount() {
+    this.updatePredicate();
+    window.addEventListener("resize", this.updatePredicate);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updatePredicate);
+  }
+
+  updatePredicate() {
+    this.setState({ isDesktop: window.innerWidth > 1200 });
+  }
+
+  onCollapse = (collapsed) => {
+    this.setState({ collapsed });
+  };
+
+  onApplyChanges = (club1) => {
+    const item = {
+      name: this.state.clubName ? this.state.clubName : club1.name,
+      about: this.state.about ? this.state.about : club1.about,
+      description: this.state.description
+        ? this.state.description
+        : club1.description,
+      location: this.state.location ? this.state.location : club1.location,
+      category: this.state.category ? this.state.category : club1.category,
+    };
+    this.props.editClub(this.state.clubId, item);
+    this.setState({
+      editMode: false,
+      clubName: "",
+      about: "",
+      description: "",
+      location: "",
+      category: "",
+    });
+  };
 
   onNewEvent = () => {
     const tempPush = {
@@ -149,38 +201,100 @@ class ClubPage extends Component {
     }, 1000);
   };
 
+  onDeleteClick = (id) => {
+    this.props.deleteClub(id);
+  };
+
   // Render the content
-  renderForm = () => {
+  renderForm = (club1) => {
     // What page should show?
-    const club1 = this.props.clubs.clubs.find(
-      (item) => item._id === this.state.clubId
-    );
     console.log(club1);
     console.log(this.props.auth);
     switch (this.state.display) {
       case "home":
         return (
           <div //Home
-            className="halfCol useFont"
+            className="useFont"
             style={{ paddingTop: "33px", color: "grey", fontSize: "18px" }}
           >
-            {club1.category} <br />
-            <b style={{ fontWeight: "600", fontSize: "48px", color: "black" }}>
-              {club1.name}
-            </b>
+            {this.state.editMode &&
+            this.props.auth.isAuthenticated &&
+            club1.president === this.props.auth.user.name ? (
+              <div>
+                Club name:{" "}
+                <Input
+                  defaultValue={club1.name}
+                  onChange={(e) => this.setState({ clubName: e.target.value })}
+                ></Input>
+              </div>
+            ) : (
+              <b
+                style={{ fontWeight: "600", fontSize: "48px", color: "black" }}
+              >
+                {club1.name}
+              </b>
+            )}
             <br />
-            Location: {club1.location} <br />
+            Category:{" "}
+            {this.state.editMode &&
+            this.props.auth.isAuthenticated &&
+            club1.staff.indexOf(this.props.auth.user.name) > -1 ? (
+              <Input
+                defaultValue={club1.category}
+                onChange={(e) => this.setState({ category: e.target.value })}
+              ></Input>
+            ) : (
+              club1.category
+            )}
             <br />
-            About: <br />
             <br />
-            {club1.description}
+            Location:{" "}
+            {this.state.editMode &&
+            this.props.auth.isAuthenticated &&
+            club1.staff.indexOf(this.props.auth.user.name) > -1 ? (
+              <Input
+                defaultValue={club1.location}
+                onChange={(e) => this.setState({ location: e.target.value })}
+              ></Input>
+            ) : (
+              club1.location
+            )}{" "}
+            <br />
+            <br />
+            Description:{" "}
+            {this.state.editMode &&
+            this.props.auth.isAuthenticated &&
+            club1.staff.indexOf(this.props.auth.user.name) > -1 ? (
+              <Input
+                defaultValue={club1.description}
+                onChange={(e) => this.setState({ description: e.target.value })}
+              ></Input>
+            ) : (
+              club1.description
+            )}
+            <br />
+            <br />
+            {this.state.editMode &&
+            this.props.auth.isAuthenticated &&
+            club1.staff.indexOf(this.props.auth.user.name) > -1 ? (
+              <Button onClick={() => this.onApplyChanges(club1)}>
+                Apply Changes
+              </Button>
+            ) : null}
+            {this.state.editMode &&
+            this.props.auth.isAuthenticated &&
+            club1.president === this.props.auth.user.name ? (
+              <Button danger onClick={() => this.onDeleteClick(club1._id)}>
+                <Link to={"/clubspage"}>Delete Club</Link>
+              </Button>
+            ) : null}
           </div>
         );
 
       case "about":
         return (
           <div //About
-            className="halfCol useFont"
+            className=" useFont"
             style={{ paddingTop: "20px", color: "grey", fontSize: "18px" }}
           >
             <b style={{ fontWeight: "600", fontSize: "48px", color: "black" }}>
@@ -190,31 +304,52 @@ class ClubPage extends Component {
             Club President: {club1.president}
             <br />
             <br />
-            {club1.about}
+            About:{" "}
+            {this.state.editMode &&
+            this.props.auth.isAuthenticated &&
+            club1.staff.indexOf(this.props.auth.user.name) > -1 ? (
+              <Input
+                defaultValue={club1.about}
+                onChange={(e) => this.setState({ about: e.target.value })}
+              ></Input>
+            ) : (
+              club1.about
+            )}
+            <br />
+            <br />
+            {this.state.editMode &&
+            this.props.auth.isAuthenticated &&
+            club1.staff.indexOf(this.props.auth.user.name) > -1 ? (
+              <Button onClick={() => this.onApplyChanges(club1)}>
+                Apply Changes
+              </Button>
+            ) : null}
           </div>
         ); //pass method to child
 
       case "announcements":
         return (
           <div //Announcements
-            className="halfCol useFont"
+            className=" useFont"
             style={{ paddingTop: "20px", color: "grey", fontSize: "18px" }}
           >
             <b style={{ fontWeight: "600", fontSize: "48px", color: "black" }}>
               Announcements
             </b>
             <br />
-            {this.props.auth.isAuthenticated &&
+            {this.state.editMode &&
+            this.props.auth.isAuthenticated &&
             club1.staff.indexOf(this.props.auth.user.name) > -1 ? (
               <NewModal
                 clubId={this.state.clubId}
                 modalType="announcement"
               ></NewModal>
             ) : null}
-            {club1.announcements.map(({ name, announcement, _id }) => (
+            {club1.announcements.map(({ name, announcement, date, _id }) => (
               <Card
                 style={{ width: "300", marginTop: 16 }}
                 actions={
+                  this.state.editMode &&
                   this.props.auth.isAuthenticated &&
                   club1.staff.indexOf(this.props.auth.user.name) > -1
                     ? [
@@ -234,8 +369,12 @@ class ClubPage extends Component {
                   avatar={
                     <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
                   }
-                  title={name}
-                  description={<div> {announcement}</div>}
+                  title={
+                    <div>
+                      {name} - Posted on: {date}
+                    </div>
+                  }
+                  description={<div>{announcement}</div>}
                 />
               </Card>
             ))}
@@ -243,80 +382,16 @@ class ClubPage extends Component {
         ); //pass method to child
 
       case "discussions":
-        const data = [
-          {
-            actions: [<span key="comment-list-reply-to-0">Reply to</span>],
-            author: "Han Solo",
-            avatar:
-              "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-            content: (
-              <p>
-                We supply a series of design principles, practical patterns and
-                high quality design resources (Sketch and Axure), to help people
-                create their product prototypes beautifully and efficiently.
-              </p>
-            ),
-            datetime: (
-              <Tooltip
-                title={moment()
-                  .subtract(1, "days")
-                  .format("YYYY-MM-DD HH:mm:ss")}
-              >
-                <span>{moment().subtract(1, "days").fromNow()}</span>
-              </Tooltip>
-            ),
-          },
-          {
-            actions: [<span key="comment-list-reply-to-0">Reply to</span>],
-            author: "Han Solo",
-            avatar:
-              "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-            content: (
-              <p>
-                We supply a series of design principles, practical patterns and
-                high quality design resources (Sketch and Axure), to help people
-                create their product prototypes beautifully and efficiently.
-              </p>
-            ),
-            datetime: (
-              <Tooltip
-                title={moment()
-                  .subtract(2, "days")
-                  .format("YYYY-MM-DD HH:mm:ss")}
-              >
-                <span>{moment().subtract(2, "days").fromNow()}</span>
-              </Tooltip>
-            ),
-          },
-        ];
-
-        const Editor = ({ onChange, onSubmit, submitting, value }) => (
-          <div>
-            <Form.Item>
-              <TextArea rows={4} onChange={onChange} value={value} />
-            </Form.Item>
-            <Form.Item>
-              <Button
-                htmlType="submit"
-                loading={submitting}
-                onClick={onSubmit}
-                type="primary"
-              >
-                Add Comment
-              </Button>
-            </Form.Item>
-          </div>
-        );
-
         return (
           <div //Discussions
-            className="halfCol useFont"
+            className=" useFont"
             style={{ paddingTop: "20px", color: "grey", fontSize: "18px" }}
           >
             <b style={{ fontWeight: "600", fontSize: "48px", color: "black" }}>
               Discussions
             </b>
-            {this.props.auth.isAuthenticated &&
+            {this.state.editMode &&
+            this.props.auth.isAuthenticated &&
             club1.staff.indexOf(this.props.auth.user.name) > -1 ? (
               <NewModal
                 clubId={this.state.clubId}
@@ -325,10 +400,11 @@ class ClubPage extends Component {
             ) : null}
             <br />
             {club1.discussions.map(
-              ({ _id, name, username, discussion, comments }) => (
+              ({ _id, name, username, discussion, comments, date }) => (
                 <Card
                   style={{ width: "300", marginTop: 16 }}
                   actions={
+                    this.state.editMode &&
                     this.props.auth.isAuthenticated &&
                     club1.staff.indexOf(this.props.auth.user.name) > -1
                       ? [
@@ -347,7 +423,7 @@ class ClubPage extends Component {
                   <Meta
                     title={
                       <div>
-                        {name} - Posted by {username}
+                        {name} - Posted by {username} on {date}
                       </div>
                     }
                     description={
@@ -388,7 +464,11 @@ class ClubPage extends Component {
                                       ]
                                     : null
                                 }
-                                author={item.username}
+                                author={
+                                  <div>
+                                    {item.username} - Posted on {item.date}
+                                  </div>
+                                }
                                 content={item.comment}
                               />
                             </li>
@@ -436,57 +516,65 @@ class ClubPage extends Component {
       case "events":
         return (
           <div //Events
-            className="halfCol useFont"
+            className=" useFont"
             style={{ paddingTop: "20px", color: "grey", fontSize: "18px" }}
           >
             <b style={{ fontWeight: "600", fontSize: "48px", color: "black" }}>
               Events
             </b>
             <br />
-            {this.props.auth.isAuthenticated &&
+            {this.state.editMode &&
+            this.props.auth.isAuthenticated &&
             club1.staff.indexOf(this.props.auth.user.name) > -1 ? (
               <NewModal clubId={this.state.clubId} modalType="event"></NewModal>
             ) : null}
-            {club1.events.map(({ name, description, dateOfEvent, _id }) => (
-              <Card
-                style={{ width: "300", marginTop: 16 }}
-                actions={
-                  this.props.auth.isAuthenticated &&
-                  club1.staff.indexOf(this.props.auth.user.name) > -1
-                    ? [
-                        <EventModal
-                          name={name}
-                          clubId={this.state.clubId}
-                          eventId={_id}
-                        ></EventModal>,
-                        <div onClick={() => this.deleteEvent(_id)}>
-                          <Icon type="delete"></Icon>
-                        </div>,
-                      ]
-                    : null
-                }
-              >
-                <Meta
-                  avatar={
-                    <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+            {club1.events.map(
+              ({ name, description, dateOfEvent, date, _id }) => (
+                <Card
+                  style={{ width: "300", marginTop: 16 }}
+                  actions={
+                    this.state.editMode &&
+                    this.props.auth.isAuthenticated &&
+                    club1.staff.indexOf(this.props.auth.user.name) > -1
+                      ? [
+                          <EventModal
+                            name={name}
+                            clubId={this.state.clubId}
+                            eventId={_id}
+                          ></EventModal>,
+                          <div onClick={() => this.deleteEvent(_id)}>
+                            <Icon type="delete"></Icon>
+                          </div>,
+                        ]
+                      : null
                   }
-                  title={name}
-                  description={
-                    <div>
-                      <div>Date of Event: {dateOfEvent}</div>
-                      <div>Description: {description}</div>
-                    </div>
-                  }
-                />
-              </Card>
-            ))}
+                >
+                  <Meta
+                    avatar={
+                      <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                    }
+                    title={
+                      <div>
+                        {name} - Posted on {date}
+                      </div>
+                    }
+                    description={
+                      <div>
+                        <div>Date of Event: {dateOfEvent}</div>
+                        <div>Description: {description}</div>
+                      </div>
+                    }
+                  />
+                </Card>
+              )
+            )}
           </div>
         ); //pass method to child
 
       case "members":
         return (
           <div //Members
-            className="halfCol useFont"
+            className=" useFont"
             style={{ paddingTop: "20px", color: "grey", fontSize: "18px" }}
           >
             <b style={{ fontWeight: "600", fontSize: "48px", color: "black" }}>
@@ -515,7 +603,7 @@ class ClubPage extends Component {
       default:
         return (
           <div //Home
-            className="halfCol useFont hide"
+            className=" useFont hide"
             style={{ paddingTop: "20px", color: "grey", fontSize: "18px" }}
           >
             Student Organization <br />
@@ -569,129 +657,142 @@ class ClubPage extends Component {
     this.setState({ display: "members", button6: "#C0C0C0" });
   };
   render() {
-    const { clubs } = this.props.clubs;
-    const club1 = clubs.find((item) => item._id === this.state.clubId);
+    const club1 = this.props.clubs.clubs.find(
+      (item) => item._id === this.state.clubId
+    );
     return (
       <div>
         {club1 && (
-          <div className="clubPageContainer" style={{ paddingTop: "80px" }}>
-            <div className="header">
-              <img
-                alt="some alt"
-                style={{
-                  marginTop: "20px",
-                  width: "150px",
-                  height: "160px",
-                }}
-                src={images["clublogo.png"]}
-              />
-              <img
-                alt="some alt"
-                style={{
-                  marginTop: "45px",
-
-                  width: "1100px",
-                  height: "390px",
-                }}
-                src={images["citynight.jpg"]}
-              />
-            </div>
-            <div className="leftSidebar">
-              <ul style={{ listStyle: "none" }}>
-                <li>
+          <div style={{ paddingTop: "58px" }}>
+            <Layout>
+              <Sider
+                width={this.state.isDesktop ? "15%" : "70%"}
+                theme="light"
+                breakpoint="lg"
+                collapsedWidth="0"
+                collapsible
+                collapsed={this.state.collapsed}
+                onCollapse={this.onCollapse}
+              >
+                <ul style={{ listStyle: "none" }}>
+                  {this.props.auth.isAuthenticated &&
+                  club1.staff.indexOf(this.props.auth.user.name) > -1 ? (
+                    <div>
+                      <Switch
+                        checked={this.state.editMode}
+                        onChange={() =>
+                          this.setState({ editMode: !this.state.editMode })
+                        }
+                      />
+                      Edit Mode
+                    </div>
+                  ) : null}
+                  <li>
+                    <div
+                      className="btn sideMenuBtns"
+                      style={{
+                        backgroundColor: this.state.button1,
+                        boxShadow: "none",
+                      }}
+                      onMouseEnter={(event) => onMouseOver(event)}
+                      onMouseOut={(event) => onMouseOut(event)}
+                      onClick={this.home}
+                    >
+                      {" "}
+                      Home
+                    </div>
+                  </li>
+                  <li style={{ paddingTop: "10px" }}>
+                    <div
+                      className="btn sideMenuBtns"
+                      href="#"
+                      style={{
+                        backgroundColor: this.state.button2,
+                        boxShadow: "none",
+                      }}
+                      onMouseEnter={(event) => onMouseOver(event)}
+                      onMouseOut={(event) => onMouseOut(event)}
+                      onClick={this.about}
+                    >
+                      About
+                    </div>
+                  </li>
+                  <li style={{ paddingTop: "10px" }}>
+                    <div
+                      className="btn sideMenuBtns"
+                      href="#"
+                      style={{
+                        backgroundColor: this.state.button3,
+                        boxShadow: "none",
+                      }}
+                      onMouseEnter={(event) => onMouseOver(event)}
+                      onMouseOut={(event) => onMouseOut(event)}
+                      onClick={this.announcements}
+                    >
+                      Announcements
+                    </div>
+                  </li>
+                  <li style={{ paddingTop: "10px" }}>
+                    <div
+                      className="btn sideMenuBtns"
+                      href="#"
+                      style={{
+                        backgroundColor: this.state.button4,
+                        boxShadow: "none",
+                      }}
+                      onMouseEnter={(event) => onMouseOver(event)}
+                      onMouseOut={(event) => onMouseOut(event)}
+                      onClick={this.discussions}
+                    >
+                      Discussions
+                    </div>
+                  </li>
+                  <li style={{ paddingTop: "10px" }}>
+                    <div
+                      className="btn sideMenuBtns"
+                      href="#"
+                      style={{
+                        backgroundColor: this.state.button5,
+                        boxShadow: "none",
+                      }}
+                      onMouseEnter={(event) => onMouseOver(event)}
+                      onMouseOut={(event) => onMouseOut(event)}
+                      onClick={this.events}
+                    >
+                      Events
+                    </div>
+                  </li>
+                  <li style={{ paddingTop: "10px" }}>
+                    <div
+                      className="btn sideMenuBtns"
+                      href="#"
+                      style={{
+                        backgroundColor: this.state.button6,
+                        boxShadow: "none",
+                      }}
+                      onMouseEnter={(event) => onMouseOver(event)}
+                      onMouseOut={(event) => onMouseOut(event)}
+                      onClick={this.members}
+                    >
+                      Members
+                    </div>
+                  </li>
+                </ul>
+              </Sider>
+              <Layout style={{ overflowY: "hidden" }}>
+                <Content style={{ margin: "0 16px" }}>
                   <div
-                    className="btn sideMenuBtns"
                     style={{
-                      backgroundColor: this.state.button1,
-                      boxShadow: "none",
+                      minHeight: 360,
+                      height: "93vh",
+                      paddingLeft: "30px",
                     }}
-                    onMouseEnter={(event) => onMouseOver(event)}
-                    onMouseOut={(event) => onMouseOut(event)}
-                    onClick={this.home}
                   >
-                    {" "}
-                    Home
+                    {this.renderForm(club1)}
                   </div>
-                </li>
-                <li style={{ paddingTop: "10px" }}>
-                  <div
-                    className="btn sideMenuBtns"
-                    href="#"
-                    style={{
-                      backgroundColor: this.state.button2,
-                      boxShadow: "none",
-                    }}
-                    onMouseEnter={(event) => onMouseOver(event)}
-                    onMouseOut={(event) => onMouseOut(event)}
-                    onClick={this.about}
-                  >
-                    About
-                  </div>
-                </li>
-                <li style={{ paddingTop: "10px" }}>
-                  <div
-                    className="btn sideMenuBtns"
-                    href="#"
-                    style={{
-                      backgroundColor: this.state.button3,
-                      boxShadow: "none",
-                    }}
-                    onMouseEnter={(event) => onMouseOver(event)}
-                    onMouseOut={(event) => onMouseOut(event)}
-                    onClick={this.announcements}
-                  >
-                    Announcements
-                  </div>
-                </li>
-                <li style={{ paddingTop: "10px" }}>
-                  <div
-                    className="btn sideMenuBtns"
-                    href="#"
-                    style={{
-                      backgroundColor: this.state.button4,
-                      boxShadow: "none",
-                    }}
-                    onMouseEnter={(event) => onMouseOver(event)}
-                    onMouseOut={(event) => onMouseOut(event)}
-                    onClick={this.discussions}
-                  >
-                    Discussions
-                  </div>
-                </li>
-                <li style={{ paddingTop: "10px" }}>
-                  <div
-                    className="btn sideMenuBtns"
-                    href="#"
-                    style={{
-                      backgroundColor: this.state.button5,
-                      boxShadow: "none",
-                    }}
-                    onMouseEnter={(event) => onMouseOver(event)}
-                    onMouseOut={(event) => onMouseOut(event)}
-                    onClick={this.events}
-                  >
-                    Events
-                  </div>
-                </li>
-                <li style={{ paddingTop: "10px" }}>
-                  <div
-                    className="btn sideMenuBtns"
-                    href="#"
-                    style={{
-                      backgroundColor: this.state.button6,
-                      boxShadow: "none",
-                    }}
-                    onMouseEnter={(event) => onMouseOver(event)}
-                    onMouseOut={(event) => onMouseOut(event)}
-                    onClick={this.members}
-                  >
-                    Members
-                  </div>
-                </li>
-              </ul>
-            </div>
-
-            <div className="content">{this.renderForm()}</div>
+                </Content>
+              </Layout>
+            </Layout>
           </div>
         )}
       </div>
@@ -703,7 +804,9 @@ ClubPage.propTypes = {
   getClubs: PropTypes.func.isRequired,
   getClub: PropTypes.func.isRequired,
   putClub: PropTypes.func.isRequired,
+  deleteClub: PropTypes.func.isRequired,
   deleteClubEvent: PropTypes.func.isRequired,
+  editClub: PropTypes.func.isRequired,
   editClubEvent: PropTypes.func.isRequired,
   deleteClubAnnouncement: PropTypes.func.isRequired,
   deleteClubDiscussion: PropTypes.func.isRequired,
@@ -720,7 +823,9 @@ export default connect(mapStateToProps, {
   getClubs,
   getClub,
   putClub,
+  deleteClub,
   deleteClubEvent,
+  editClub,
   editClubEvent,
   deleteClubAnnouncement,
   deleteClubDiscussion,

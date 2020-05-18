@@ -45,6 +45,21 @@ router.delete("/:id", (req, res) => {
     .catch((err) => res.status(404).json({ success: false }));
 });
 
+// This is for editting club name, description, category, about, location
+router.put("/edit/:clubId", (req, res) => {
+  Club.findOneAndUpdate(
+    { _id: req.params.clubId },
+    {
+      $set: req.body,
+    },
+    { new: true },
+    (err, result) => {
+      if (err) return res.json(err);
+      else return res.json(result);
+    }
+  );
+});
+
 // update club
 // This is for adding to announcements, events, discussions
 router.put("/add/:id", (req, res) => {

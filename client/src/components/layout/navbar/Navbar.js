@@ -4,38 +4,18 @@ import "../../../App.css";
 import { Icon, Dropdown, Menu } from "antd";
 import "./Toolbar.css";
 
-const onMouseOver = event => {
-  const el = event.target;
-  el.style.color = "#40E0D0";
-};
-
-const onMouseOut = event => {
-  const el = event.target;
-  el.style.color = "#707070";
-};
-
-const onMouseOver2 = event => {
-  const el = event.target;
-  el.style.color = "black";
-};
-
-const onMouseOut2 = event => {
-  const el = event.target;
-  el.style.color = "white";
-};
-
 class Navbar extends Component {
   state = { visible: false };
 
   showDrawer = () => {
     this.setState({
-      visible: true
+      visible: true,
     });
   };
 
   onClose = () => {
     this.setState({
-      visible: false
+      visible: false,
     });
   };
   render() {
@@ -49,14 +29,6 @@ class Navbar extends Component {
           <div>
             <Link to="/clubspage" class="navbar-items2">
               Browse Clubs
-            </Link>
-
-            <Link to="/clubspage" class="navbar-items2">
-              Join a Club
-            </Link>
-
-            <Link to="/clubspage" class="navbar-items2">
-              Create a Club
             </Link>
 
             <Link
@@ -79,15 +51,6 @@ class Navbar extends Component {
                 <Menu style={{ textAlign: "center" }}>
                   <Menu.Item>
                     <Link
-                      to="/"
-                      class="navbar-items2"
-                      style={{ margin: "0px 100px" }}
-                    >
-                      Home
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Link
                       to="/clubspage"
                       class="navbar-items2"
                       style={{ margin: "0px 50px" }}
@@ -95,24 +58,7 @@ class Navbar extends Component {
                       Browse Clubs
                     </Link>
                   </Menu.Item>
-                  <Menu.Item>
-                    <Link
-                      to="/clubspage"
-                      class="navbar-items2"
-                      style={{ margin: "0px 50px" }}
-                    >
-                      Join a Club
-                    </Link>
-                  </Menu.Item>
-                  <Menu.Item>
-                    <Link
-                      to="/clubspage"
-                      class="navbar-items2"
-                      style={{ margin: "0px 50px" }}
-                    >
-                      Create a Club
-                    </Link>
-                  </Menu.Item>
+
                   <Menu.Item>
                     <Link
                       className="navbar-items2"

@@ -98,8 +98,6 @@ class ClubsList extends Component {
                     >
                       Go To Club
                     </Link>,
-                    <Icon type="edit" />,
-                    <Icon type="ellipsis" />,
                   ]}
                 >
                   <Meta

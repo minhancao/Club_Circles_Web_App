@@ -1,19 +1,8 @@
 import React, { Component } from "react";
-import {
-  Button,
-  Modal,
-  Form,
-  Input,
-  Icon,
-  Checkbox,
-  Radio,
-  message,
-  Tooltip,
-} from "antd";
+import { Modal, Form, Input, Icon, message, Tooltip } from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { editClubDiscussionComment } from "../../actions/clubActions";
-import { USER_LOADING } from "../../actions/types";
 
 class CommentModal extends Component {
   state = {

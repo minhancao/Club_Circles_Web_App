@@ -51,6 +51,18 @@ export const addDiscussionComment = (id, discussionId, item) => (dispatch) => {
   );
 };
 
+export const editClub = (id, item) => (dispatch) => {
+  dispatch(setClubsLoading());
+  axios.put(`/api/clubs/edit/${id}`, item).then(
+    axios.get("/api/clubs").then((res) =>
+      dispatch({
+        type: GET_CLUBS,
+        payload: res.data,
+      })
+    )
+  );
+};
+
 export const editClubDiscussion = (id, discussionId, item) => (dispatch) => {
   dispatch(setClubsLoading());
   axios.put(`/api/clubs/edit/discussions/${id}/${discussionId}`, item).then(

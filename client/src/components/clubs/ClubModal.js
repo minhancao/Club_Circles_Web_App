@@ -7,7 +7,7 @@ import {
   Icon,
   Checkbox,
   Radio,
-  message
+  message,
 } from "antd";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -21,7 +21,7 @@ class ClubModal extends Component {
     description: "",
     category: "",
     location: "",
-    currentUser: this.props.auth.user
+    currentUser: this.props.auth.user,
   };
 
   showModal = () => {
@@ -47,7 +47,7 @@ class ClubModal extends Component {
         location: values.location,
         president: user.name,
         staff: [user.name],
-        members: [user.name, "minhancao", "ryanhong", "randytau"]
+        members: [user.name],
       };
 
       // Add item via addItem action
@@ -60,11 +60,11 @@ class ClubModal extends Component {
     });
   };
 
-  saveFormRef = formRef => {
+  saveFormRef = (formRef) => {
     this.formRef = formRef;
   };
 
-  onSubmit = e => {
+  onSubmit = (e) => {
     e.preventDefault();
 
     const { user } = this.props.auth;
@@ -75,7 +75,7 @@ class ClubModal extends Component {
       location: this.state.location,
       president: user.name,
       staff: [user.name],
-      members: [user.name, "minhancao", "ryanhong", "randytau"]
+      members: [user.name, "minhancao", "ryanhong", "randytau"],
     };
 
     // Add item via addItem action
@@ -112,9 +112,9 @@ class ClubModal extends Component {
                     rules: [
                       {
                         required: true,
-                        message: "Please input the title of the club!"
-                      }
-                    ]
+                        message: "Please input the title of the club!",
+                      },
+                    ],
                   })(<Input />)}
                 </Form.Item>
                 <Form.Item label="Description">
@@ -132,7 +132,7 @@ class ClubModal extends Component {
                 </Form.Item>
                 <Form.Item className="collection-create-form_last-form-item">
                   {getFieldDecorator("modifier", {
-                    initialValue: "public"
+                    initialValue: "public",
                   })(
                     <Radio.Group>
                       <Radio value="public">Public</Radio>
@@ -163,15 +163,12 @@ class ClubModal extends Component {
   }
 }
 ClubModal.propTypes = {
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   item: state.item,
-  auth: state.auth
+  auth: state.auth,
 });
 
-export default connect(
-  mapStateToProps,
-  { addClub }
-)(ClubModal);
+export default connect(mapStateToProps, { addClub })(ClubModal);
