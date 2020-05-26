@@ -29,6 +29,7 @@ import {
   Form,
   Input,
   Layout,
+  message,
 } from "antd";
 import EventModal from "./EventModal";
 import AnnouncementModal from "./AnnouncementModal";
@@ -205,6 +206,45 @@ class ClubPage extends Component {
     this.props.deleteClub(id);
   };
 
+  onAcceptJoinRequest = (club, newMember) => {
+    var membersArr = club.members ? club.members : [];
+    membersArr.push(newMember);
+    var joinArr = club.joinRequests ? club.joinRequests : [];
+    const joinIndex = joinArr.indexOf(newMember);
+    if (joinIndex > -1) {
+      joinArr.splice(joinIndex, 1);
+    }
+    const item = {
+      members: membersArr,
+      joinRequests: joinArr,
+    };
+    this.props.editClub(this.state.clubId, item);
+    message.success("Request to join from " + newMember + " accepted");
+  };
+
+  onDeclineJoinRequest = (club, newMember) => {
+    var joinArr = club.joinRequests ? club.joinRequests : [];
+    const joinIndex = joinArr.indexOf(newMember);
+    if (joinIndex > -1) {
+      joinArr.splice(joinIndex, 1);
+    }
+    const item = {
+      joinRequests: joinArr,
+    };
+    this.props.editClub(this.state.clubId, item);
+    message.error("Request to join from " + newMember + " declined");
+  };
+
+  onRequestToJoin = (club) => {
+    var joinArr = club.joinRequests ? club.joinRequests : [];
+    joinArr.push(this.props.auth.user.name);
+    const item = {
+      joinRequests: joinArr,
+    };
+    this.props.editClub(club._id, item);
+    message.success("Requested to join club " + club.name);
+  };
+
   // Render the content
   renderForm = (club1) => {
     // What page should show?
@@ -274,6 +314,15 @@ class ClubPage extends Component {
             )}
             <br />
             <br />
+            {this.props.auth.isAuthenticated &&
+            club1.joinRequests &&
+            club1.joinRequests.indexOf(this.props.auth.user.name) < 0 &&
+            club1.members &&
+            club1.members.indexOf(this.props.auth.user.name) < 0 ? (
+              <Button onClick={() => this.onRequestToJoin(club1)}>
+                Request to Join
+              </Button>
+            ) : null}
             {this.state.editMode &&
             this.props.auth.isAuthenticated &&
             club1.staff.indexOf(this.props.auth.user.name) > -1 ? (
@@ -600,6 +649,43 @@ class ClubPage extends Component {
           </div>
         ); //pass method to child
 
+      case "join-requests":
+        return (
+          <div //Members
+            className=" useFont"
+            style={{ paddingTop: "20px", color: "grey", fontSize: "18px" }}
+          >
+            <b style={{ fontWeight: "600", fontSize: "48px", color: "black" }}>
+              Join Requests
+            </b>
+            <br />
+            {club1.joinRequests.map((member) => (
+              <div>
+                <img
+                  alt="some alt"
+                  style={{
+                    display: "inline-block",
+                    width: "60px",
+                    height: "60px",
+                    borderRadius: "100%",
+                    paddingRight: "5px",
+                  }}
+                  src={imagesUsers[(member + ".png").toString().toLowerCase()]}
+                />
+                {member}
+                <Button onClick={() => this.onAcceptJoinRequest(club1, member)}>
+                  Accept
+                </Button>
+                <Button
+                  onClick={() => this.onDeclineJoinRequest(club1, member)}
+                >
+                  Decline
+                </Button>
+              </div>
+            ))}
+          </div>
+        ); //pass method to child
+
       default:
         return (
           <div //Home
@@ -629,6 +715,7 @@ class ClubPage extends Component {
       button4: "white",
       button5: "white",
       button6: "white",
+      button7: "white",
     });
   };
   // Create a function that will update the state in parent
@@ -655,6 +742,10 @@ class ClubPage extends Component {
   members = () => {
     this.whiteButtons();
     this.setState({ display: "members", button6: "#C0C0C0" });
+  };
+  joinRequests = () => {
+    this.whiteButtons();
+    this.setState({ display: "join-requests", button7: "#C0C0C0" });
   };
   render() {
     const club1 = this.props.clubs.clubs.find(
@@ -777,6 +868,25 @@ class ClubPage extends Component {
                       Members
                     </div>
                   </li>
+                  {this.state.editMode &&
+                  this.props.auth.isAuthenticated &&
+                  club1.staff.indexOf(this.props.auth.user.name) > -1 ? (
+                    <li style={{ paddingTop: "10px" }}>
+                      <div
+                        className="btn sideMenuBtns"
+                        href="#"
+                        style={{
+                          backgroundColor: this.state.button7,
+                          boxShadow: "none",
+                        }}
+                        onMouseEnter={(event) => onMouseOver(event)}
+                        onMouseOut={(event) => onMouseOut(event)}
+                        onClick={this.joinRequests}
+                      >
+                        Join Requests
+                      </div>
+                    </li>
+                  ) : null}
                 </ul>
               </Sider>
               <Layout style={{ overflowY: "hidden" }}>

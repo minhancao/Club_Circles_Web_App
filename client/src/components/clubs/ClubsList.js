@@ -1,10 +1,15 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { getClubs, deleteClub, getClub } from "../../actions/clubActions";
+import {
+  getClubs,
+  deleteClub,
+  getClub,
+  editClub,
+} from "../../actions/clubActions";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import "../../App.css";
-import { Card, Icon, Avatar, Row, Col } from "antd";
+import { Card, Icon, Avatar, Row, Col, message } from "antd";
 import ClubModal from "./ClubModal";
 
 const { Meta } = Card;
@@ -54,6 +59,16 @@ class ClubsList extends Component {
     console.log(this.props.clubs.club.members);
   };
 
+  onRequestToJoin = (club) => {
+    var joinArr = club.joinRequests ? club.joinRequests : [];
+    joinArr.push(this.props.auth.user.name);
+    const item = {
+      joinRequests: joinArr,
+    };
+    this.props.editClub(club._id, item);
+    message.success("Requested to join club " + club.name);
+  };
+
   render() {
     console.log(this.props.auth);
     const { clubs } = this.props.clubs;
@@ -79,7 +94,15 @@ class ClubsList extends Component {
 
         <Row gutter={[16, 16]}>
           {clubs.map(
-            ({ _id, name, description, category, location, members }) => (
+            ({
+              _id,
+              name,
+              description,
+              category,
+              location,
+              members,
+              joinRequests,
+            }) => (
               <Col xs={24} sm={24} md={12} lg={12} xl={8} key={_id}>
                 <Card
                   style={{ maxWidth: "80%", marginBottom: "20px" }}
@@ -90,15 +113,46 @@ class ClubsList extends Component {
                       style={{ width: "100%", height: "auto" }}
                     />
                   }
-                  actions={[
-                    <Link
-                      onClick={this.onGoClick.bind(this, _id)}
-                      to={"/ClubPage/" + _id}
-                      className="btn"
-                    >
-                      Go To Club
-                    </Link>,
-                  ]}
+                  actions={
+                    this.props.auth.isAuthenticated &&
+                    joinRequests &&
+                    joinRequests.indexOf(this.props.auth.user.name) < 0 &&
+                    members &&
+                    members.indexOf(this.props.auth.user.name) < 0
+                      ? [
+                          <Link
+                            onClick={this.onGoClick.bind(this, _id)}
+                            to={"/ClubPage/" + _id}
+                            className="btn"
+                          >
+                            Go To Club
+                          </Link>,
+                          <a
+                            onClick={() =>
+                              this.onRequestToJoin({
+                                _id,
+                                name,
+                                description,
+                                category,
+                                location,
+                                members,
+                                joinRequests,
+                              })
+                            }
+                          >
+                            Request to Join
+                          </a>,
+                        ]
+                      : [
+                          <Link
+                            onClick={this.onGoClick.bind(this, _id)}
+                            to={"/ClubPage/" + _id}
+                            className="btn"
+                          >
+                            Go To Club
+                          </Link>,
+                        ]
+                  }
                 >
                   <Meta
                     avatar={
@@ -127,6 +181,8 @@ class ClubsList extends Component {
 ClubsList.propTypes = {
   getClubs: PropTypes.func.isRequired,
   getClub: PropTypes.func.isRequired,
+  deleteClub: PropTypes.func.isRequired,
+  editClub: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
 };
 
@@ -135,6 +191,9 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-export default connect(mapStateToProps, { getClubs, deleteClub, getClub })(
-  ClubsList
-);
+export default connect(mapStateToProps, {
+  getClubs,
+  deleteClub,
+  getClub,
+  editClub,
+})(ClubsList);

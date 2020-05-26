@@ -100,5 +100,6 @@ const ClubSchema = new Schema({
   events: [eventsSchema],
   members: [String],
   staff: [String],
+  joinRequests: [String],
 });
 module.exports = Club = mongoose.model("clubs", ClubSchema);
